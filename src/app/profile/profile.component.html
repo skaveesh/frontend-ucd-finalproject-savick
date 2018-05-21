@@ -1,0 +1,7 @@
+<p>
+  request decimal numbers every 10 seconds by a POST call ({{requested}})
+</p>
+
+<ul *ngIf="randomDecimal != null">
+  <li *ngFor="let decimalItem of randomDecimal.result.random.data">{{decimalItem}}</li>
+</ul>
