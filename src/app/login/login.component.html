@@ -1,11 +1,16 @@
-<h2>Login: </h2>
-
-<div style="align: center">
+<div style="align:center; background:#242424; padding: 8px 36px 16px;">
+  <h2 style="color:#d0d0d0">Login: </h2>
   <form style="justify-content: center; align-items: center; flex: 50">
     <mat-form-field>
-      <input matInput placeholder="username" (ngModel)="username">
+      <input matInput placeholder="Username" (ngModel)="username">
+    </mat-form-field>
+    <br>
+    <mat-form-field>
+      <input matInput placeholder="Password" (ngModel)="password">
     </mat-form-field>
     <br>
     <button mat-raised-button color="accent">Login</button>
   </form>
+
 </div>
+<a style="text-align:center" href="#">Sign-up Here</a>

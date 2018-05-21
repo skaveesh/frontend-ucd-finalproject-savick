@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import {HttprequestService} from "../services/httprequest.service";
 import {RandomDecimal} from "../modules/RandomDecimal";
-import {Observable} from 'rxjs/Rx'
+import {Observable} from 'rxjs/Rx';
 
 
 @Component({
@@ -17,7 +17,7 @@ export class ProfileComponent implements OnInit {
   constructor(private httprequestservice:HttprequestService) {
     Observable.interval(10 * 1000).startWith(0).subscribe(x=>{
       this.requested = "requesting....";
-      this.requestRandomDecimal();
+      //this.requestRandomDecimal();
     })
   }
 

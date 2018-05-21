@@ -10,12 +10,17 @@ import { LoginComponent } from './login/login.component';
 import { ProfileComponent } from './profile/profile.component';
 import {RouterModule} from "@angular/router";
 import {HttpClientModule} from "@angular/common/http";
+import { FlexLayoutModule } from "@angular/flex-layout";
+import { SimulatorComponent } from './simulator/simulator.component';
+import { PortfolioComponent } from './portfolio/portfolio.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     LoginComponent,
-    ProfileComponent
+    ProfileComponent,
+    SimulatorComponent,
+    PortfolioComponent
   ],
   imports: [
     BrowserModule,
@@ -26,13 +31,27 @@ import {HttpClientModule} from "@angular/common/http";
     BrowserAnimationsModule,
     MatToolbarModule,
     HttpClientModule,
+    FlexLayoutModule,
     RouterModule.forRoot([
+
+      {
+        path: 'login',
+        component: LoginComponent
+      },
+      {
+        path: 'simulator',
+        component: SimulatorComponent
+      },
       {
         path: 'profile',
         component: ProfileComponent
       },
       {
-        path: 'login',
+        path: 'portfolio',
+        component: PortfolioComponent
+      },
+      {
+        path: '',
         component: LoginComponent
       }
     ])

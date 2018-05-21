@@ -1,18 +1,19 @@
-<!--The content below is only a placeholder and can be replaced.-->
-<div style="text-align:center">
-  <h1>
-    Welcome to {{ title }}!
-  </h1>
+<mat-toolbar style="left:0; right:0">
+  <mat-toolbar-row>
+    <button mat-raised-button class="btn-margin" routerLink="/login">Login</button>
+    <button mat-raised-button class="btn-margin" routerLink="/simulator">Simulator</button>
+    <button mat-raised-button class="btn-margin" routerLink="/profile">Bank Profile</button>
+    <button mat-raised-button class="btn-margin" routerLink="/portfolio">Broker Portfolio</button>
+    <span class="fill-remaining-space"></span>
+    <span style="font-size: 24px;">{{ title }}!</span>
+  </mat-toolbar-row>
+</mat-toolbar>
 
-  <mat-toolbar>
-    <mat-toolbar-row>
-      <button mat-raised-button color="accent" class="btn-margin" routerLink="/login">Login</button>
-      <button mat-raised-button color="accent" class="btn-margin" routerLink="/profile">Profile</button>
-    </mat-toolbar-row>
-  </mat-toolbar>
+<div style="height: 100px"></div>
 
+<div fxLayout="row" fxLayoutAlign="center center">
+  <router-outlet></router-outlet>
 </div>
 
-<router-outlet></router-outlet>
 
 

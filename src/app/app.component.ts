@@ -10,9 +10,5 @@ export class AppComponent {
 
   title = 'Stock Market Simulator';
 
-  posts: any;
-
   constructor(){  }
-
-
 }
