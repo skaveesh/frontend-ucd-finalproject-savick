@@ -6,13 +6,14 @@ import { AppComponent } from './app.component';
 import {MatButtonModule, MatCheckboxModule, MatInputModule, MatToolbarModule} from '@angular/material';
 import {BrowserAnimationsModule} from "@angular/platform-browser/animations";
 import {FormsModule} from "@angular/forms";
-import { LoginComponent } from './login/login.component';
-import { ProfileComponent } from './profile/profile.component';
+import { LoginComponent } from './components/login/login.component';
+import { ProfileComponent } from './components/profile/profile.component';
 import {RouterModule} from "@angular/router";
 import {HttpClientModule} from "@angular/common/http";
 import { FlexLayoutModule } from "@angular/flex-layout";
-import { SimulatorComponent } from './simulator/simulator.component';
-import { PortfolioComponent } from './portfolio/portfolio.component';
+import { SimulatorComponent } from './components/simulator/simulator.component';
+import { PortfolioComponent } from './components/portfolio/portfolio.component';
+import {AuthGuard} from "./security/auth.guard";
 
 @NgModule({
   declarations: [
@@ -44,7 +45,8 @@ import { PortfolioComponent } from './portfolio/portfolio.component';
       },
       {
         path: 'profile',
-        component: ProfileComponent
+        component: ProfileComponent,
+        canActivate: [AuthGuard]
       },
       {
         path: 'portfolio',
@@ -56,7 +58,7 @@ import { PortfolioComponent } from './portfolio/portfolio.component';
       }
     ])
   ],
-  providers: [],
+  providers: [AuthGuard],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
