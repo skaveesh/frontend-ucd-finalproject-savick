@@ -1,7 +1,8 @@
 import { Injectable } from '@angular/core';
 import {AuthInfo} from "./auth-info";
-import {BehaviorSubject, Observable} from "rxjs";
+import {BehaviorSubject} from "rxjs";
 import {Router} from "@angular/router";
+import {HttprequestService} from "../services/httprequest.service";
 
 @Injectable({
   providedIn: 'root'
@@ -12,20 +13,27 @@ export class AuthService {
 
   authInfo$: BehaviorSubject<AuthInfo> = new BehaviorSubject<AuthInfo>(AuthService.UNKNOWN_USER);
 
-  constructor(private router:Router) { }
+  constructor(private router:Router, private loginRequest:HttprequestService) { }
 
-  login(username, password):Observable<AuthInfo> {
-    let newAuthUser;
+  login(username, password):Promise<AuthInfo> {
+    return this.loginRequest.getUserLoginData(username,password)
+      .then(res=>{
+        let newAuthUser, statusCode;
 
-    if(username.localeCompare("hello") == 0 && password.localeCompare('123456') == 0){
-      newAuthUser = new AuthInfo(username);
+        statusCode = res.status;
 
-      console.log('yes', newAuthUser.isLoggedIn());
-    }else{
-      newAuthUser = new AuthInfo(null);
-    }
-    this.authInfo$.next(newAuthUser);
-    return newAuthUser;
+        if(statusCode == 200){
+          newAuthUser = new AuthInfo(username);
+        }
+
+        this.authInfo$.next(newAuthUser);
+        return newAuthUser;
+
+      }).catch(
+        err=>{
+          return new AuthInfo(null);
+        }
+      );
   }
 
   logout() {

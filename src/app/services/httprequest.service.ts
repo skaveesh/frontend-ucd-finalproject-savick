@@ -1,41 +1,47 @@
 import { Injectable } from '@angular/core';
 import {HttpClient, HttpHeaders} from "@angular/common/http";
-import {Params, RandomDecimalRequest} from "../modules/RandomDecimalRequest";
 import "rxjs/Rx"
+import {Authorization, UserLoginData} from "../modules/UserLoginData";
 
 @Injectable({
   providedIn: 'root'
 })
 export class HttprequestService {
-  readonly ROOT_URL = 'https://api.random.org/';
-  readonly API_KEY = '95f6aad8-91c1-46d7-b14d-3e5dfd81ea02';
-  readonly REQUST_METHOD = 'generateDecimalFractions';
-  readonly JSON_RPC = '2.0';
+  readonly ROOT_URL = 'http://localhost:5000/';
+  //readonly ROOT_URL = 'https://aws.amazon.bla.bla.bla:500/';
 
   constructor(private http: HttpClient) { }
 
+  readonly jsonHeader = new HttpHeaders(
+  {
+    'Content-Type': 'application/json'
+  });
+
   getRandomDecimal(id:number, n:number, decimalPlaces:number, replacement:boolean){
-    const post_url = this.ROOT_URL + "json-rpc/1/invoke";
+    return null;
+  }
 
-    const headers = new HttpHeaders(
-      {
-        'Content-Type': 'application/json'
-      });
+  getUserLoginData(username:string, password:string) : Promise<Response>{
+    const login_url = this.ROOT_URL+"player/login";
 
-    let parameters: Params = {
-      apiKey : this.API_KEY,
-      n : n,
-      decimalPlaces : decimalPlaces,
-      replacement : replacement
+    let authorization : Authorization ={
+      username: username,
+      password: password
     };
 
-    let rdr: RandomDecimalRequest = {
-      jsonrpc : this.JSON_RPC,
-      method : this.REQUST_METHOD,
-      params : parameters,
-      id : id
+    let userLoginData : UserLoginData = {
+      authorization : authorization
     };
 
-    return this.http.post(post_url, rdr, {headers: headers});
+    return this.http.post(login_url, userLoginData, {headers: this.jsonHeader, observe: 'response'}).toPromise().then(this.extractData).catch(this.handleError);
+  }
+
+  private extractData(res) {
+    return res;
+  }
+
+  private handleError(error: any): Promise<any> {
+    console.error('An error occurred', error);
+    return Promise.reject(error.message || error);
   }
 }

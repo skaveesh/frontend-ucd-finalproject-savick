@@ -1,4 +1,5 @@
 import {Component} from '@angular/core';
+import {AuthService} from "./security/auth.service";
 
 @Component({
   selector: 'app-root',
@@ -9,6 +10,17 @@ import {Component} from '@angular/core';
 export class AppComponent {
 
   title = 'Stock Market Simulator';
+  private userLoggedIn:boolean;
 
-  constructor(){  }
+  constructor(private authService:AuthService){
+    this.authService.authInfo$.subscribe(
+      (info) =>{
+        this.userLoggedIn = info.isLoggedIn();
+      }
+    )
+  }
+
+  logout(){
+    this.authService.logout();
+  }
 }

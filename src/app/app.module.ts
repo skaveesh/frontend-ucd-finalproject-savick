@@ -3,7 +3,7 @@ import { NgModule } from '@angular/core';
 
 import { AppComponent } from './app.component';
 
-import {MatButtonModule, MatCheckboxModule, MatInputModule, MatToolbarModule} from '@angular/material';
+import {MatButtonModule, MatCheckboxModule, MatInputModule, MatToolbarModule, MatSnackBarModule} from '@angular/material';
 import {BrowserAnimationsModule} from "@angular/platform-browser/animations";
 import {FormsModule} from "@angular/forms";
 import { LoginComponent } from './components/login/login.component';
@@ -33,6 +33,7 @@ import {AuthGuard} from "./security/auth.guard";
     MatToolbarModule,
     HttpClientModule,
     FlexLayoutModule,
+    MatSnackBarModule,
     RouterModule.forRoot([
 
       {

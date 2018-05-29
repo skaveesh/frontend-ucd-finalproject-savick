@@ -3,7 +3,6 @@ import {HttprequestService} from "../../services/httprequest.service";
 import {RandomDecimal} from "../../modules/RandomDecimal";
 import {Observable} from 'rxjs/Rx';
 
-
 @Component({
   selector: 'app-profile',
   templateUrl: './profile.component.html',

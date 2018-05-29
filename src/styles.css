@@ -4,3 +4,10 @@
 * {
   font-family: Calibri, sans-serif !important;
 }
+
+input, select, textarea{
+  color : #dfdfdf !important;
+}
+textarea:focus, input:focus {
+  color: #dfdfdf;
+}
