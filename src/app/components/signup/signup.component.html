@@ -1,0 +1,18 @@
+<div style="align-content:center; background:#242424; padding: 8px 36px 16px;">
+  <h2 style="color:#d0d0d0">Signup: </h2>
+  <form style="justify-content: center; align-items: center; flex: 50">
+    <mat-form-field>
+      <input matInput placeholder="New username" [(ngModel)]="username" name="username" type="text">
+    </mat-form-field>
+    <br>
+    <mat-form-field>
+      <input matInput placeholder="New Password" [(ngModel)]="password" name="password" type="password">
+    </mat-form-field>
+    <br>
+    <mat-form-field>
+      <input matInput placeholder="Confirm Password" [(ngModel)]="confirmpassword" name="password" type="password">
+    </mat-form-field>
+    <br>
+    <button mat-raised-button color="accent" (click)="createPlayer()">Signup</button>
+  </form>
+</div>

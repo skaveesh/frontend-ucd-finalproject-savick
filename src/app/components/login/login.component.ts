@@ -22,7 +22,7 @@ export class LoginComponent implements OnInit {
     this.authService.login(this.username,this.password).then(
       res=>{
         if(this.authService.authInfo$.value.isLoggedIn())
-          this.router.navigate(['/profile']);
+          this.router.navigate(['/simulator']);
         else
           this.openLoginErrorSnackBar();
       }

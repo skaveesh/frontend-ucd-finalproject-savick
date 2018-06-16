@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import {Injectable} from '@angular/core';
 import {AuthInfo} from "./auth-info";
 import {BehaviorSubject} from "rxjs";
 import {Router} from "@angular/router";
@@ -13,24 +13,23 @@ export class AuthService {
 
   authInfo$: BehaviorSubject<AuthInfo> = new BehaviorSubject<AuthInfo>(AuthService.UNKNOWN_USER);
 
-  constructor(private router:Router, private loginRequest:HttprequestService) { }
+  constructor(private router: Router, private loginRequest: HttprequestService) {
+  }
 
-  login(username, password):Promise<AuthInfo> {
-    return this.loginRequest.getUserLoginData(username,password)
-      .then(res=>{
+  login(username, password): Promise<AuthInfo> {
+    return this.loginRequest.loginPlayer(username, password)
+      .then(res => {
         let newAuthUser, statusCode;
 
         statusCode = res.status;
 
-        if(statusCode == 200){
+        if (statusCode == 200)
           newAuthUser = new AuthInfo(username);
-        }
 
         this.authInfo$.next(newAuthUser);
         return newAuthUser;
-
       }).catch(
-        err=>{
+        err => {
           return new AuthInfo(null);
         }
       );

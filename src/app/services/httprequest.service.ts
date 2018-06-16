@@ -1,7 +1,8 @@
 import { Injectable } from '@angular/core';
 import {HttpClient, HttpHeaders} from "@angular/common/http";
 import "rxjs/Rx"
-import {Authorization, UserLoginData} from "../modules/UserLoginData";
+import {Authorization, PlayerLoginModel} from "../models/PlayerLoginModel";
+import {CreatePlayerAccountForName, PlayerCreateModel} from "../models/PlayerCreateModel";
 
 @Injectable({
   providedIn: 'root'
@@ -17,11 +18,34 @@ export class HttprequestService {
     'Content-Type': 'application/json'
   });
 
-  getRandomDecimal(id:number, n:number, decimalPlaces:number, replacement:boolean){
-    return null;
+  /**
+   * create player account
+   * @param {string} username
+   * @param {string} password
+   * @returns {Promise<Response>}
+   */
+  createPlayer(username:string, password:string) : Promise<Response>{
+    const login_url = this.ROOT_URL+"player/createaccount";
+
+    let createAccount : CreatePlayerAccountForName ={
+      username: username,
+      password: password
+    };
+
+    let userAccountCreateData : PlayerCreateModel = {
+      createPlayerAccountForName : createAccount
+    };
+
+    return this.http.post(login_url, userAccountCreateData, {headers: this.jsonHeader, observe: 'response'}).toPromise().then(this.extractData).catch(this.handleError);
   }
 
-  getUserLoginData(username:string, password:string) : Promise<Response>{
+  /**
+   * player login
+   * @param {string} username
+   * @param {string} password
+   * @returns {Promise<Response>}
+   */
+  loginPlayer(username:string, password:string) : Promise<Response>{
     const login_url = this.ROOT_URL+"player/login";
 
     let authorization : Authorization ={
@@ -29,7 +53,7 @@ export class HttprequestService {
       password: password
     };
 
-    let userLoginData : UserLoginData = {
+    let userLoginData : PlayerLoginModel = {
       authorization : authorization
     };
 

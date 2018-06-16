@@ -3,6 +3,6 @@ export interface Authorization {
   password: string;
 }
 
-export interface UserLoginData {
+export interface PlayerLoginModel {
   authorization: Authorization;
 }
