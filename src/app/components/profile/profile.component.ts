@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import {HttprequestService} from "../../services/httprequest.service";
-import {Observable} from 'rxjs/Rx';
+import {AuthService} from "../../security/auth.service";
 
 @Component({
   selector: 'app-profile',
@@ -9,16 +9,30 @@ import {Observable} from 'rxjs/Rx';
 })
 export class ProfileComponent implements OnInit {
 
-  requested : string = "not requested yet";
+  public bankAccountHasCreated : boolean = false;
 
-  constructor(private httprequestservice:HttprequestService) {
-    Observable.interval(10 * 1000).subscribe(x=>{
-      this.requested = "requesting....";
-      //this.requestRandomDecimal();
-    })
-  }
+  constructor(private bankAccountRequests: HttprequestService) { }
 
   ngOnInit() {
+    this.isBankAccountExists();
+  }
+
+  private isBankAccountExists() {
+    this.bankAccountRequests.checkExistenceOfBankAccount(AuthService.getLoggeInUsername()).then(
+      res => {
+        this.bankAccountHasCreated = res.value;
+      }
+    );
+  }
+
+  public createBankAccount(){
+    this.bankAccountRequests.createBankAccount(AuthService.getLoggeInUsername()).subscribe(
+      res => {
+        if(res.status == 200){
+          this.bankAccountHasCreated = true;
+        }
+      }
+    )
   }
 
 }

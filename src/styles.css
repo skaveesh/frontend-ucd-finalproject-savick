@@ -11,3 +11,7 @@ input, select, textarea{
 textarea:focus, input:focus {
   color: #dfdfdf;
 }
+
+.icon-color{
+  color: #7b1fa2;
+}

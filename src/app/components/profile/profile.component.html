@@ -1,7 +1,6 @@
-<p>
-  request decimal numbers every 10 seconds by a POST call ({{requested}})
+<p *ngIf="bankAccountHasCreated">
+  bank account created!
 </p>
-
-<ul *ngIf="randomDecimal != null">
-  <li *ngFor="let decimalItem of randomDecimal.result.random.data">{{decimalItem}}</li>
-</ul>
+<p *ngIf="!bankAccountHasCreated">
+  <button mat-raised-button color="accent" (click)="createBankAccount()">Create Bank Account</button>
+</p>

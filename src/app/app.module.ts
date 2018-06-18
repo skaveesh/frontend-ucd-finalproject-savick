@@ -7,7 +7,11 @@ import {
   MatInputModule,
   MatToolbarModule,
   MatSnackBarModule,
-  MatTooltipModule
+  MatTooltipModule,
+  MatExpansionModule,
+  MatListModule,
+  MatTabsModule,
+  MatTableModule
 } from '@angular/material';
 import { BrowserAnimationsModule } from "@angular/platform-browser/animations";
 import { FormsModule} from "@angular/forms";
@@ -21,6 +25,13 @@ import { PortfolioComponent } from './components/portfolio/portfolio.component';
 import { AuthGuard } from "./security/auth.guard";
 import { StocksComponent } from './components/stocks/stocks.component';
 import { SignupComponent } from './components/signup/signup.component';
+import {ChartModule} from "angular2-highcharts";
+import { HighchartsStatic } from 'angular2-highcharts/dist/HighchartsService';
+import * as highcharts from 'highcharts/highstock';
+
+export function highchartsFactory() {
+  return highcharts;
+}
 
 @NgModule({
   declarations: [
@@ -44,6 +55,11 @@ import { SignupComponent } from './components/signup/signup.component';
     FlexLayoutModule,
     MatSnackBarModule,
     MatTooltipModule,
+    MatExpansionModule,
+    MatListModule,
+    MatTabsModule,
+    MatTableModule,
+    ChartModule,
     RouterModule.forRoot([
 
       {
@@ -79,7 +95,14 @@ import { SignupComponent } from './components/signup/signup.component';
       }
     ])
   ],
-  providers: [AuthGuard],
+  providers: [
+    AuthGuard,
+    {
+      provide: HighchartsStatic,
+      useFactory: highchartsFactory
+    }
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
+

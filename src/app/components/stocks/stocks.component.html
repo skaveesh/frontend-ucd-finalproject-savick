@@ -1,3 +1,29 @@
-<p>
-  stocks works!
-</p>
+<div style="align-content:center; text-align: center">
+  <h2 style="color:#3f3f3f">Stock Market</h2>
+  <h6 style="color:#3f3f3f">(Historic Data)</h6>
+
+  <div class="fa-3x icon-color"  *ngIf="stockMarketModel == null">
+    <i class="fas fa-cog fa-spin"></i>
+  </div>
+
+  <chart [options]="optionsLine" style="position: center;" *ngIf="stockMarketModel != null" ></chart>
+
+  <mat-accordion *ngIf="stockMarketModel != null" >
+
+    <mat-expansion-panel *ngFor="let sector of stockMarketModel.market">
+      <mat-expansion-panel-header>
+        <mat-panel-title>
+          {{sector.sectorName}}
+        </mat-panel-title>
+      </mat-expansion-panel-header>
+
+      <mat-list role="list" *ngFor="let stock of sector.stocks">
+        <mat-list-item role="listitem">{{stock.companyName + " (" + stock.stock + " : " + stock.price[9] + ")"}}&nbsp; &nbsp;<button (click)="loadChart(stock)" style="margin-left:auto; margin-right:0; display:block" matTooltip="Load to Stock Chart" mat-raised-button color="accent">Load</button></mat-list-item>
+      </mat-list>
+
+    </mat-expansion-panel>
+
+  </mat-accordion>
+
+</div>
+

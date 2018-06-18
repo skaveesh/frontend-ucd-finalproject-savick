@@ -13,7 +13,15 @@ export class AuthService {
 
   authInfo$: BehaviorSubject<AuthInfo> = new BehaviorSubject<AuthInfo>(AuthService.UNKNOWN_USER);
 
+  public static userLoggedIn : boolean;
+  public static loggedInUsername : string;
+
   constructor(private router: Router, private loginRequest: HttprequestService) {
+    this.authInfo$.subscribe(
+      (info) => {
+        AuthService.userLoggedIn = info.isLoggedIn();
+        AuthService.loggedInUsername = info.getUsername();
+      });
   }
 
   login(username, password): Promise<AuthInfo> {
@@ -40,4 +48,11 @@ export class AuthService {
     this.router.navigate(['/login']);
   }
 
+  public static isUserLoggedIn(){
+    return AuthService.userLoggedIn;
+  }
+
+  public static getLoggeInUsername(){
+    return AuthService.loggedInUsername;
+  }
 }

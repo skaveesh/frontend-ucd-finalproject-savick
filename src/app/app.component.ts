@@ -10,8 +10,8 @@ import {AuthService} from "./security/auth.service";
 export class AppComponent {
 
   title = 'Stock Market Simulator';
-  public userLoggedIn : boolean;
-  public loggedInUsername : string;
+  public userLoggedIn : boolean = false;
+  public loggedInUsername : string = "";
 
   constructor(private authService:AuthService){
     this.authService.authInfo$.subscribe(
