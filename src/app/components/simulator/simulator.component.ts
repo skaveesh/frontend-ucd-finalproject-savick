@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import {AuthService} from "../../security/auth.service";
 
 @Component({
   selector: 'app-simulator',
@@ -7,9 +8,19 @@ import { Component, OnInit } from '@angular/core';
 })
 export class SimulatorComponent implements OnInit {
 
-  constructor() { }
+
+
+  constructor(private authS:AuthService) { }
 
   ngOnInit() {
+  }
+
+  disableAll(){
+    this.authS.gameStart$.next(true);
+  }
+
+  enableAll(){
+    this.authS.gameStart$.next(false);
   }
 
 }

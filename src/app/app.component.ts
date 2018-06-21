@@ -13,13 +13,22 @@ export class AppComponent {
   public userLoggedIn : boolean = false;
   public loggedInUsername : string = "";
 
+  public stockMarketDisabled : boolean = false;
+
   constructor(private authService:AuthService){
     this.authService.authInfo$.subscribe(
       (info) =>{
         this.userLoggedIn = info.isLoggedIn();
         this.loggedInUsername = info.getUsername();
       }
+    );
+
+    this.authService.gameStart$.subscribe(
+      (info) =>{
+        this.stockMarketDisabled = info;
+      }
     )
+
   }
 
   logout(){

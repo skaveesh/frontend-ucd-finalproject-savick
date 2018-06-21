@@ -6,7 +6,7 @@
       <button mat-mini-fab color="accent" class="btn-margin" routerLink="/simulator" matTooltip="Simulator" ><i class="fas fa-dice"></i></button>
       <button mat-mini-fab color="accent" routerLink="/profile" matTooltip="Bank Profile"><i class="fas fa-money-check-alt"></i></button>
       <button mat-mini-fab color="accent" class="btn-margin" routerLink="/portfolio" matTooltip="Portfolio"><i class="fas fa-user"></i></button>
-      <button mat-mini-fab color="accent" routerLink="/stocks" matTooltip="Stock Market"><i class="fas fa-chart-line"></i></button>
+      <button mat-mini-fab color="accent" routerLink="/stocks" matTooltip="Stock Market" [disabled]="stockMarketDisabled"><i class="fas fa-chart-line"></i></button>
       <span class="fill-remaining-space"></span>
       <span style="font-size: 24px; color:#d0d0d0">{{ title }}!</span>
     </mat-toolbar-row>

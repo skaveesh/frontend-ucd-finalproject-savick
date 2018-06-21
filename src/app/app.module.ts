@@ -11,7 +11,8 @@ import {
   MatExpansionModule,
   MatListModule,
   MatTabsModule,
-  MatTableModule
+  MatTableModule,
+  MatCardModule
 } from '@angular/material';
 import { BrowserAnimationsModule } from "@angular/platform-browser/animations";
 import { FormsModule} from "@angular/forms";
@@ -59,6 +60,7 @@ export function highchartsFactory() {
     MatListModule,
     MatTabsModule,
     MatTableModule,
+    MatCardModule,
     ChartModule,
     RouterModule.forRoot([
 

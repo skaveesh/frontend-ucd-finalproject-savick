@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import {Component, OnInit} from '@angular/core';
 import {HttprequestService} from "../../services/httprequest.service";
 import {AuthService} from "../../security/auth.service";
 import {BroughtStockList, OwnStockList, SoldStockList} from "../../models/PortfolioModel";
@@ -10,14 +10,16 @@ import {BroughtStockList, OwnStockList, SoldStockList} from "../../models/Portfo
 })
 export class PortfolioComponent implements OnInit {
 
-  public brokerPortfolioHasCreated : boolean = false;
-  ownStockList : OwnStockList[] = [];
+  public brokerPortfolioHasCreated: boolean = null;
+  public hasPortfolioCreated: boolean = false;
+
+  ownStockList: OwnStockList[] = [];
   ownStockListDisplayedColumns = ['stock', 'quantity'];
 
-  broughtStockList : BroughtStockList[] = [];
+  broughtStockList: BroughtStockList[] = [];
   broughtStockListDisplayedColumns = ['stock', 'quantity', 'price', 'turn'];
 
-  soldStockList : SoldStockList[] = [];
+  soldStockList: SoldStockList[] = [];
   soldStockListDisplayedColumns = ['stock', 'quantity', 'price', 'turn'];
 
   constructor(private portfolioRequests: HttprequestService) {
@@ -32,35 +34,37 @@ export class PortfolioComponent implements OnInit {
       res => {
         this.brokerPortfolioHasCreated = res.value;
 
-        if(this.brokerPortfolioHasCreated){
+        if (this.brokerPortfolioHasCreated)
           this.getPortfolio();
-        }
+
       }
     );
   }
 
-  public createBrokerAccount(){
+  public createBrokerAccount() {
     this.portfolioRequests.createBrokerAccount(AuthService.getLoggeInUsername()).subscribe(
       res => {
-        if(res.status == 200){
+        if (res.status == 200) {
           this.brokerPortfolioHasCreated = true;
+          this.isBrokerAccountExists();
         }
       }
     )
   }
 
-  private getPortfolio(){
+  private getPortfolio() {
     this.portfolioRequests.getPortfolioFromBroker(AuthService.getLoggeInUsername()).subscribe(
-      res=>{
+      res => {
         this.ownStockList = res.portfolio.ownStockList;
         this.broughtStockList = res.portfolio.broughtStockList;
         this.soldStockList = res.portfolio.soldStockList;
+        this.hasPortfolioCreated = true;
       }
     )
   }
 
-  public returnRoundPrice(price : number){
-    return "$"+(Math.round((price* 1000)/10)/100).toFixed(2);
+  public returnRoundPrice(price: number) {
+    return "$" + (Math.round((price * 1000) / 10) / 100).toFixed(2);
   }
 }
 

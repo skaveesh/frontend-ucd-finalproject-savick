@@ -24,8 +24,8 @@ export class StocksComponent implements OnInit {
   loadChart(stock : Stock){
     this.stockChartTitle = "Stock Chart of "+stock.companyName;
     this.stockName = stock.stock;
-    // this.stockDataArray = stock.price.slice(0,10);
-    this.stockDataArray = stock.price;
+    this.stockDataArray = stock.price.slice(0,10);
+
     this.loadCharData();
   }
 
@@ -52,6 +52,10 @@ export class StocksComponent implements OnInit {
         this.stockMarketModel = res;
       }
     );
+  }
+
+  public returnRoundPrice(price: number) {
+    return "$" + (Math.round((price * 1000) / 10) / 100).toFixed(2);
   }
 
 }

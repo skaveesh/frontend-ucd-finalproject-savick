@@ -9,6 +9,7 @@ import {BooleanValue} from "../models/BooleanValue";
 import {CreateBrokerAccount, CreateBrokerAccountFromName} from "../models/CreateBrokerAccount";
 import {CreateBankAccount, CreateBankAccountFromName} from "../models/CreateBankAccount";
 import {PortfolioModel} from "../models/PortfolioModel";
+import {ProfileModel} from "../models/ProfileModel";
 
 @Injectable({
   providedIn: 'root'
@@ -118,6 +119,14 @@ export class HttprequestService {
       headers: this.jsonHeader,
       observe: 'response'
     }).catch(this.handleErrorPromise);
+  }
+
+  getProfileFromBank(username: string) : Observable<ProfileModel>{
+    const get_profile_url = this.ROOT_URL + "bank/account/profile/" + username;
+
+    return this.http.post(get_profile_url, null, {
+      headers: this.jsonHeader
+    }).catch(this.handleErrorObservable);
   }
 
   /**

@@ -1,6 +1,102 @@
-<p *ngIf="bankAccountHasCreated">
-  bank account created!
-</p>
-<p *ngIf="!bankAccountHasCreated">
-  <button mat-raised-button color="accent" (click)="createBankAccount()">Create Bank Account</button>
-</p>
+<div style="align-content:center; text-align: center">
+
+  <h2 style="color:#3f3f3f">My Bank Account</h2>
+  <h6 style="color:#3f3f3f">(Bank Transactions)</h6>
+
+  <div class="fa-3x icon-color" *ngIf="bankAccountHasCreated == null">
+    <i class="fas fa-cog fa-spin-reverse"></i>
+  </div>
+
+  <div *ngIf="bankAccountHasCreated && bankAccountHasCreated != null">
+
+    <div class="fa-3x icon-color" *ngIf="!hasProfileDownloaded">
+      <i class="fas fa-cog fa-spin"></i>
+    </div>
+
+    <div style="margin-bottom: 20px" *ngIf="hasProfileDownloaded">
+      <table>
+        <tr>
+          <td rowspan="5">
+            <img src="../../../assets/profile_image.png" alt="profile image" style="height: 80px; width: 80px">
+          </td>
+          <td style="text-align: left !important;">Account Username : {{profileName}}</td>
+        </tr>
+        <tr>
+          <td style="text-align: left !important;">
+            Account Balance : {{returnRoundPrice(profileBalance)}}
+          </td>
+        </tr>
+      </table>
+    </div>
+
+    <mat-tab-group backgroundColor="primary" *ngIf="hasProfileDownloaded">
+      <mat-tab label="Deposits by Broker">
+
+        <table mat-table [dataSource]="depositTransactionList" class="mat-elevation-z8">
+          <!-- Sender Column -->
+          <ng-container matColumnDef="sender">
+            <th mat-header-cell *matHeaderCellDef style="text-align: center"> Sender</th>
+            <td mat-cell *matCellDef="let element"> {{element.senderOrReceiver}}</td>
+          </ng-container>
+
+          <!-- Amount Column -->
+          <ng-container matColumnDef="amount">
+            <th mat-header-cell *matHeaderCellDef style="text-align: center"> Amount</th>
+            <td mat-cell *matCellDef="let element"> {{returnRoundPrice(element.amount)}}</td>
+          </ng-container>
+
+          <!-- Turn Column -->
+          <ng-container matColumnDef="turn">
+            <th mat-header-cell *matHeaderCellDef style="text-align: center"> Turn</th>
+            <td mat-cell *matCellDef="let element"> {{element.turn}}</td>
+          </ng-container>
+
+          <tr mat-header-row *matHeaderRowDef="depositTransactionListDisplayedColumns"></tr>
+          <tr mat-row *matRowDef="let row; columns: depositTransactionListDisplayedColumns;"></tr>
+        </table>
+
+        <mat-card *ngIf="depositTransactionList.length == 0">
+          No Data
+        </mat-card>
+
+      </mat-tab>
+      <mat-tab label="Withdraws by Broker">
+
+        <table mat-table [dataSource]="withdrawTransactionList" class="mat-elevation-z8">
+          <!-- Sender Column -->
+          <ng-container matColumnDef="receiver">
+            <th mat-header-cell *matHeaderCellDef style="text-align: center"> Sender</th>
+            <td mat-cell *matCellDef="let element"> {{element.senderOrReceiver}}</td>
+          </ng-container>
+
+          <!-- Amount Column -->
+          <ng-container matColumnDef="amount">
+            <th mat-header-cell *matHeaderCellDef style="text-align: center"> Amount</th>
+            <td mat-cell *matCellDef="let element"> {{returnRoundPrice(element.amount)}}</td>
+          </ng-container>
+
+          <!-- Turn Column -->
+          <ng-container matColumnDef="turn">
+            <th mat-header-cell *matHeaderCellDef style="text-align: center"> Turn</th>
+            <td mat-cell *matCellDef="let element"> {{element.turn}}</td>
+          </ng-container>
+
+          <tr mat-header-row *matHeaderRowDef="withdrawTransactionListDisplayedColumns"></tr>
+          <tr mat-row *matRowDef="let row; columns: withdrawTransactionListDisplayedColumns;"></tr>
+        </table>
+
+        <mat-card *ngIf="withdrawTransactionList.length == 0">
+          No Data
+        </mat-card>
+
+      </mat-tab>
+
+    </mat-tab-group>
+
+  </div>
+
+  <div *ngIf="!bankAccountHasCreated && bankAccountHasCreated != null">
+    <button mat-raised-button color="accent" (click)="createBankAccount()">Create Bank Account</button>
+  </div>
+
+</div>
