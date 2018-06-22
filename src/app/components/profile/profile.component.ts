@@ -30,7 +30,7 @@ export class ProfileComponent implements OnInit {
   }
 
   private isBankAccountExists() {
-    this.bankAccountRequests.checkExistenceOfBankAccount(AuthService.getLoggeInUsername()).then(
+    this.bankAccountRequests.checkExistenceOfBankAccount(AuthService.getLoggedInUsername()).then(
       res => {
         this.bankAccountHasCreated = res.value;
 
@@ -41,7 +41,7 @@ export class ProfileComponent implements OnInit {
   }
 
   public createBankAccount() {
-    this.bankAccountRequests.createBankAccount(AuthService.getLoggeInUsername()).subscribe(
+    this.bankAccountRequests.createBankAccount(AuthService.getLoggedInUsername()).subscribe(
       res => {
         if (res.status == 200) {
           this.bankAccountHasCreated = true;
@@ -52,7 +52,7 @@ export class ProfileComponent implements OnInit {
   }
 
   private getProfile() {
-    this.bankAccountRequests.getProfileFromBank(AuthService.getLoggeInUsername()).subscribe(
+    this.bankAccountRequests.getProfileFromBank(AuthService.getLoggedInUsername()).subscribe(
       res => {
         this.profileName = res.profile.name;
         this.profileBalance = res.profile.balance;

@@ -1,5 +1,103 @@
-<p>
-  simulator works!
-</p>
-<button mat-raised-button color="accent" (click)="disableAll()">Disable</button>
-<button mat-raised-button color="accent" (click)="enableAll()">Enable</button>
+<div style="align-content:center; text-align: center">
+
+  <h2 style="color:#3f3f3f">Game Simulator</h2>
+  <h5 style="color:#3f3f3f" *ngIf="!readyButtonHiddenState">Click Ready to Start</h5>
+
+  <div *ngIf="!readyDivHiddenState" #readyDiv>
+    <button *ngIf="!readyButtonHiddenState" mat-raised-button color="accent" (click)="readyGame()">Ready</button>
+
+    <table *ngIf="readyButtonHiddenState" mat-table [dataSource]="playerList" class="mat-elevation-z8">
+      <!-- Players Column -->
+      <ng-container matColumnDef="players">
+        <th mat-header-cell *matHeaderCellDef style="text-align: center"> Player </th>
+        <td mat-cell *matCellDef="let element"> {{element.name}}</td>
+      </ng-container>
+
+      <tr mat-header-row *matHeaderRowDef="playerListDisplayedColumns"></tr>
+      <tr mat-row *matRowDef="let row; columns: playerListDisplayedColumns;"></tr>
+    </table>
+    <mat-card *ngIf="readyButtonHiddenState">
+      <div class="fa-3x icon-color">
+        <i class="fas fa-cog fa-spin"></i>
+      </div>
+    </mat-card>
+
+  </div>
+
+  <div *ngIf="!gameDivHiddenState" #gameDiv>
+
+    <h4 style="color:#3f3f3f">Current Turn : {{currentTurn}}</h4>
+
+    <mat-progress-bar mode="determinate" color="warn" [value]="(currentTimeInSecWithinTurn/TIME_FOR_EACH_TURN_IN_SEC)*100" style="width: 400px; display: inline-flex"></mat-progress-bar>
+    <button mat-mini-fab color="warn">{{currentTimeInSecWithinTurn}}</button>
+
+    <!--//stock chart and loader-->
+
+    <chart [options]="optionsLine" style="position: center;" *ngIf="stockMarketModel != null" ></chart>
+
+    <mat-accordion *ngIf="stockMarketModel != null" >
+
+      <mat-expansion-panel *ngFor="let sector of stockMarketModel.market">
+        <mat-expansion-panel-header>
+          <mat-panel-title>
+            {{sector.sectorName}}
+          </mat-panel-title>
+        </mat-expansion-panel-header>
+
+        <mat-list role="list" *ngFor="let stock of sector.stocks">
+          <mat-list-item role="listitem">{{stock.companyName + " (" + stock.stock + " : " + returnRoundPrice(stock.price[9]) + ")"}}&nbsp; &nbsp;<button (click)="loadChart(stock)" style="margin-left:auto; margin-right:0; display:block" matTooltip="Load to Stock Chart" mat-raised-button color="accent">Load</button></mat-list-item>
+        </mat-list>
+
+      </mat-expansion-panel>
+
+    </mat-accordion>
+
+    <!--//stock buy and sell-->
+
+    <!--real time transactions of other players-->
+
+    <h5 style="color:#3f3f3f" *ngIf="!readyButtonHiddenState">Current Transactions of Other Players</h5>
+
+    <table mat-table [dataSource]="playerTransactionsOfTurnList" class="mat-elevation-z8">
+      <!-- Name Column -->
+      <ng-container matColumnDef="name">
+        <th mat-header-cell *matHeaderCellDef style="text-align: center"> Player </th>
+        <td mat-cell *matCellDef="let element"> {{element.name}}</td>
+      </ng-container>
+
+      <!-- SellOrBuy Column -->
+      <ng-container matColumnDef="sellOrBuy">
+        <th mat-header-cell *matHeaderCellDef style="text-align: center"> Transaction </th>
+        <td mat-cell *matCellDef="let element"> {{element.sellOrBuy}}</td>
+      </ng-container>
+
+      <!-- Stock Column -->
+      <ng-container matColumnDef="stock">
+        <th mat-header-cell *matHeaderCellDef style="text-align: center"> Stock Name </th>
+        <td mat-cell *matCellDef="let element"> {{element.stock}}</td>
+      </ng-container>
+
+      <!-- Quantity Column -->
+      <ng-container matColumnDef="quantity">
+        <th mat-header-cell *matHeaderCellDef style="text-align: center"> Quantity </th>
+        <td mat-cell *matCellDef="let element"> {{element.quantity}}</td>
+      </ng-container>
+
+      <!-- StockPrice Column -->
+      <ng-container matColumnDef="stockPrice">
+        <th mat-header-cell *matHeaderCellDef style="text-align: center"> Stock Price </th>
+        <td mat-cell *matCellDef="let element"> {{returnRoundPrice(element.stockPrice)}}</td>
+      </ng-container>
+
+      <tr mat-header-row *matHeaderRowDef="playerTransactionsOfTurnListDisplayedColumns"></tr>
+      <tr mat-row *matRowDef="let row; columns: playerTransactionsOfTurnListDisplayedColumns;"></tr>
+    </table>
+    <mat-card>
+      <div class="fa-3x icon-color">
+        <i class="fas fa-cog fa-spin"></i>
+      </div>
+    </mat-card>
+
+  </div>
+
+</div>

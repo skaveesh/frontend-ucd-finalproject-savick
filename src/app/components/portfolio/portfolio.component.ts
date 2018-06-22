@@ -30,7 +30,7 @@ export class PortfolioComponent implements OnInit {
   }
 
   private isBrokerAccountExists() {
-    this.portfolioRequests.checkExistenceOfBrokerAccount(AuthService.getLoggeInUsername()).then(
+    this.portfolioRequests.checkExistenceOfBrokerAccount(AuthService.getLoggedInUsername()).then(
       res => {
         this.brokerPortfolioHasCreated = res.value;
 
@@ -42,7 +42,7 @@ export class PortfolioComponent implements OnInit {
   }
 
   public createBrokerAccount() {
-    this.portfolioRequests.createBrokerAccount(AuthService.getLoggeInUsername()).subscribe(
+    this.portfolioRequests.createBrokerAccount(AuthService.getLoggedInUsername()).subscribe(
       res => {
         if (res.status == 200) {
           this.brokerPortfolioHasCreated = true;
@@ -53,7 +53,7 @@ export class PortfolioComponent implements OnInit {
   }
 
   private getPortfolio() {
-    this.portfolioRequests.getPortfolioFromBroker(AuthService.getLoggeInUsername()).subscribe(
+    this.portfolioRequests.getPortfolioFromBroker(AuthService.getLoggedInUsername()).subscribe(
       res => {
         this.ownStockList = res.portfolio.ownStockList;
         this.broughtStockList = res.portfolio.broughtStockList;

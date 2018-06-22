@@ -13,7 +13,7 @@ export class AppComponent {
   public userLoggedIn : boolean = false;
   public loggedInUsername : string = "";
 
-  public stockMarketDisabled : boolean = false;
+  public surroundingDisable : boolean = false;
 
   constructor(private authService:AuthService){
     this.authService.authInfo$.subscribe(
@@ -23,9 +23,9 @@ export class AppComponent {
       }
     );
 
-    this.authService.gameStart$.subscribe(
+    this.authService.gameSurroundingState$.subscribe(
       (info) =>{
-        this.stockMarketDisabled = info;
+        this.surroundingDisable = info;
       }
     )
 

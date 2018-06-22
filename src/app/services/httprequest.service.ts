@@ -10,6 +10,8 @@ import {CreateBrokerAccount, CreateBrokerAccountFromName} from "../models/Create
 import {CreateBankAccount, CreateBankAccountFromName} from "../models/CreateBankAccount";
 import {PortfolioModel} from "../models/PortfolioModel";
 import {ProfileModel} from "../models/ProfileModel";
+import {GameStatus} from "../models/GameStatus";
+import {AnalyserRecommendations} from "../models/AnalyserRecommendations";
 
 @Injectable({
   providedIn: 'root'
@@ -121,7 +123,7 @@ export class HttprequestService {
     }).catch(this.handleErrorPromise);
   }
 
-  getProfileFromBank(username: string) : Observable<ProfileModel>{
+  getProfileFromBank(username: string): Observable<ProfileModel> {
     const get_profile_url = this.ROOT_URL + "bank/account/profile/" + username;
 
     return this.http.post(get_profile_url, null, {
@@ -163,13 +165,38 @@ export class HttprequestService {
     }).catch(this.handleErrorPromise);
   }
 
-  getPortfolioFromBroker(username: string) : Observable<PortfolioModel>{
+  getPortfolioFromBroker(username: string): Observable<PortfolioModel> {
     const get_portfolio_url = this.ROOT_URL + "broker/account/portfolio/" + username;
 
     return this.http.post(get_portfolio_url, null, {
       headers: this.jsonHeader
     }).catch(this.handleErrorObservable);
   }
+
+  readyPlayer(username: string) {
+    const ready_player_url = this.ROOT_URL + "game/ready/" + username;
+
+    return this.http.post(ready_player_url, null, {
+      headers: this.jsonHeader,
+      observe: 'response'
+    }).catch(this.handleErrorPromise);
+  }
+
+  getGameStatus(): Observable<GameStatus> {
+    const get_game_status_url = this.ROOT_URL + "game/status";
+
+    return this.http.post(get_game_status_url, null, {
+      headers: this.jsonHeader
+    }).catch(this.handleErrorObservable);
+  }
+
+ getAnalyserRecommendations() : Observable<AnalyserRecommendations>{
+   const get_analyser_recommendation_url = this.ROOT_URL + "game/analyser/recommendation";
+
+   return this.http.post(get_analyser_recommendation_url, null, {
+     headers: this.jsonHeader
+   }).catch(this.handleErrorObservable);
+ }
 
   /**
    * extract data from response
