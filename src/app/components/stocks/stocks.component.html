@@ -9,6 +9,9 @@
 
   <chart [options]="optionsLine" style="position: center;" *ngIf="stockMarketModel != null" ></chart>
 
+  <br>
+  <br>
+
   <mat-accordion *ngIf="stockMarketModel != null" >
 
     <mat-expansion-panel *ngFor="let sector of stockMarketModel.market">

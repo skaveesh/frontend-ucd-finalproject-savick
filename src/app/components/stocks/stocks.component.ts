@@ -11,34 +11,45 @@ export class StocksComponent implements OnInit {
 
   public optionsLine: any;
   public stockMarketModel: StockMarketModel = null;
-  private stockChartTitle : String = null;
-  private stockName : String = null;
-  private stockDataArray : number[];
+  private stockChartTitle: String = null;
+  private stockName: String = null;
+  private stockDataArray: number[];
 
-  constructor(private stockMarket: HttprequestService) { }
+  constructor(private stockMarket: HttprequestService) {
+  }
 
   ngOnInit() {
     this.getStockMarket();
   }
 
-  loadChart(stock : Stock){
-    this.stockChartTitle = "Stock Chart of "+stock.companyName;
+  loadChart(stock: Stock) {
+    this.stockChartTitle = "Stock Chart of " + stock.companyName;
     this.stockName = stock.stock;
-    this.stockDataArray = stock.price.slice(0,10);
+    this.stockDataArray = stock.price.slice(0, 10);
 
     this.loadCharData();
   }
 
-  loadCharData(){
+  loadCharData() {
     this.optionsLine = {
       chart: {
-        height: 400
-      }, yAxis: {
-        title:{
-          text:"Stock Price"
+        height: 400,
+        backgroundColor: "#383838"
+      },
+      yAxis: {
+        title: {
+          text: "Stock Price",
+          style:{
+            color:"#FFFFFF"
+          }
         }
       },
-      title: {text: this.stockChartTitle},
+      title: {
+        text: this.stockChartTitle,
+        style:{
+          color:"#FFFFFF"
+        }
+      },
       series: [{
         name: this.stockName,
         data: this.stockDataArray

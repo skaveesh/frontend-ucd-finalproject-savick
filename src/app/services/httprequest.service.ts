@@ -12,6 +12,9 @@ import {PortfolioModel} from "../models/PortfolioModel";
 import {ProfileModel} from "../models/ProfileModel";
 import {GameStatus} from "../models/GameStatus";
 import {AnalyserRecommendations} from "../models/AnalyserRecommendations";
+import {BankBalance} from "../models/BankBalance";
+import {Buy, BuyObjectRoot, Sell, SellObjectRoot, StockAndUserDetails} from "../models/BuyAndSell";
+import {Scoreboard} from "../models/Scoreboard";
 
 @Injectable({
   providedIn: 'root'
@@ -123,10 +126,29 @@ export class HttprequestService {
     }).catch(this.handleErrorPromise);
   }
 
+
+  /**
+   * get player profile of the bank with all the transactions
+   * @param {string} username
+   * @returns {Observable<ProfileModel>}
+   */
   getProfileFromBank(username: string): Observable<ProfileModel> {
     const get_profile_url = this.ROOT_URL + "bank/account/profile/" + username;
 
     return this.http.post(get_profile_url, null, {
+      headers: this.jsonHeader
+    }).catch(this.handleErrorObservable);
+  }
+
+  /**
+   * get user bank account balance
+   * @param {string} username
+   * @returns {Observable<BankBalance>}
+   */
+  getBankBalance(username: string): Observable<BankBalance> {
+    const get_bank_balance_url = this.ROOT_URL + "bank/account/balance/" + username;
+
+    return this.http.post(get_bank_balance_url, null, {
       headers: this.jsonHeader
     }).catch(this.handleErrorObservable);
   }
@@ -165,6 +187,11 @@ export class HttprequestService {
     }).catch(this.handleErrorPromise);
   }
 
+  /**
+   * get portfolio from the broker
+   * @param {string} username
+   * @returns {Observable<PortfolioModel>}
+   */
   getPortfolioFromBroker(username: string): Observable<PortfolioModel> {
     const get_portfolio_url = this.ROOT_URL + "broker/account/portfolio/" + username;
 
@@ -173,6 +200,75 @@ export class HttprequestService {
     }).catch(this.handleErrorObservable);
   }
 
+  /**
+   * buy stocks from the broker
+   * @param {string} username
+   * @param {string} stock
+   * @param {number} quantity
+   * @param {number} price
+   * @returns {Observable<BuyObjectRoot>}
+   */
+  buyFromBroker(username: string, stock: string, quantity: number, price: number) {
+    const buy_url = this.ROOT_URL + "broker/stock/buy";
+
+    let stockAndUserDetails : StockAndUserDetails = {
+      name: username,
+      stock:stock,
+      quantity:quantity,
+      price:price
+    };
+
+    let buy : Buy = {
+      stockAndUserDetails : stockAndUserDetails
+    };
+
+    let buyObjectRoot : BuyObjectRoot = {
+      buy : buy
+    };
+
+    return this.http.post(buy_url, buyObjectRoot, {
+      headers: this.jsonHeader,
+      observe: 'response'
+    }).catch(this.handleErrorPromise);
+  }
+
+  /**
+   * sell own stocks through the broker
+   * @param {string} username
+   * @param {string} stock
+   * @param {number} quantity
+   * @param {number} price
+   * @returns {Observable<SellObjectRoot>}
+   */
+  sellThroughBroker(username: string, stock: string, quantity: number, price: number) {
+    const sell_url = this.ROOT_URL + "broker/stock/sell";
+
+    let stockAndUserDetails : StockAndUserDetails = {
+      name: username,
+      stock:stock,
+      quantity:quantity,
+      price:price
+    };
+
+    let sell : Sell = {
+      stockAndUserDetails : stockAndUserDetails
+    };
+
+    let sellObjectRoot : SellObjectRoot= {
+      sell : sell
+    };
+
+    return this.http.post(sell_url, sellObjectRoot, {
+      headers: this.jsonHeader,
+      observe: 'response'
+    }).catch(this.handleErrorPromise);
+  }
+
+  /**
+   * join the game which will start within 60 seconds
+   * @param {string} username
+   * @returns {Observable<any>}
+   */
   readyPlayer(username: string) {
     const ready_player_url = this.ROOT_URL + "game/ready/" + username;
 
@@ -182,6 +278,10 @@ export class HttprequestService {
     }).catch(this.handleErrorPromise);
   }
 
+  /**
+   * send timely request to the server to get the status of the game
+   * @returns {Observable<GameStatus>}
+   */
   getGameStatus(): Observable<GameStatus> {
     const get_game_status_url = this.ROOT_URL + "game/status";
 
@@ -190,13 +290,30 @@ export class HttprequestService {
     }).catch(this.handleErrorObservable);
   }
 
- getAnalyserRecommendations() : Observable<AnalyserRecommendations>{
-   const get_analyser_recommendation_url = this.ROOT_URL + "game/analyser/recommendation";
+  /**
+   * get analyser recommendation about the game
+   * @returns {Observable<AnalyserRecommendations>}
+   */
+  getAnalyserRecommendations(): Observable<AnalyserRecommendations> {
+    const get_analyser_recommendation_url = this.ROOT_URL + "game/analyser/recommendation";
 
-   return this.http.post(get_analyser_recommendation_url, null, {
-     headers: this.jsonHeader
-   }).catch(this.handleErrorObservable);
- }
+    return this.http.post(get_analyser_recommendation_url, null, {
+      headers: this.jsonHeader
+    }).catch(this.handleErrorObservable);
+  }
+
+  /**
+   * get final scoreboard of the players
+   * @param {number} serverTurn
+   * @returns {Observable<Scoreboard>}
+   */
+  getScoreBoard(serverTurn : number): Observable<Scoreboard> {
+    const get_scoreboard_url = this.ROOT_URL + "player/scoreboard/" + serverTurn;
+
+    return this.http.post(get_scoreboard_url, null, {
+      headers: this.jsonHeader
+    }).catch(this.handleErrorObservable);
+  }
 
   /**
    * extract data from response

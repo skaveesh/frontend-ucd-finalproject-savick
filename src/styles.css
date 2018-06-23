@@ -5,6 +5,15 @@
   font-family: Calibri, sans-serif;
 }
 
+body{
+  background: #000000;
+  color: #dddddd !important;
+}
+
+h1,h2,h3,h4,h5,h6{
+  color: #dddddd !important;
+}
+
 input, select, textarea{
   color : #dfdfdf !important;
 }

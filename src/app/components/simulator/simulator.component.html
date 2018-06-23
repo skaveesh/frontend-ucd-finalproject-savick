@@ -4,7 +4,8 @@
   <h5 style="color:#3f3f3f" *ngIf="!readyButtonHiddenState">Click Ready to Start</h5>
 
   <div *ngIf="!readyDivHiddenState" #readyDiv>
-    <button *ngIf="!readyButtonHiddenState" mat-raised-button color="accent" (click)="readyGame()">Ready</button>
+
+    <button *ngIf="!readyButtonHiddenState" mat-raised-button color="warn" (click)="readyGame()" [disabled]="disableReadyButton">{{readyButtonText}}</button>
 
     <table *ngIf="readyButtonHiddenState" mat-table [dataSource]="playerList" class="mat-elevation-z8">
       <!-- Players Column -->
@@ -26,14 +27,33 @@
 
   <div *ngIf="!gameDivHiddenState" #gameDiv>
 
-    <h4 style="color:#3f3f3f">Current Turn : {{currentTurn}}</h4>
+    <!--timer-->
+    <div style="z-index: 1001;position: fixed; top: 60px; left: 50%">
+      <mat-progress-bar mode="determinate" color="warn" [value]="(currentTimeInSecWithinTurn/TIME_FOR_EACH_TURN_IN_SEC)*100" style="position:fixed; left:0; width: 100vw"></mat-progress-bar>
+      <div style="position: relative; left: -50%; top:5px">
+        <mat-chip-list style="display: inline-flex">
+          <mat-chip color="primary" [selected]="true">
+            <i class="fas fa-cog fa-spin"></i>&nbsp;&nbsp;
+            Current Turn : {{currentTurn}}
+          </mat-chip>
+        </mat-chip-list>
+        <button mat-mini-fab color="warn">{{currentTimeInSecWithinTurn}}</button>
+      </div>
+    </div>
 
-    <mat-progress-bar mode="determinate" color="warn" [value]="(currentTimeInSecWithinTurn/TIME_FOR_EACH_TURN_IN_SEC)*100" style="width: 400px; display: inline-flex"></mat-progress-bar>
-    <button mat-mini-fab color="warn">{{currentTimeInSecWithinTurn}}</button>
 
     <!--//stock chart and loader-->
+    <br>
+    <br>
 
-    <chart [options]="optionsLine" style="position: center;" *ngIf="stockMarketModel != null" ></chart>
+    <mat-chip-list *ngIf="stockName == null" style="display: inline-flex; position: center;">
+      <mat-chip color="warn" [selected]="true">Load any stock to begin buying and selling transactions</mat-chip>
+    </mat-chip-list>
+
+    <chart [options]="optionsLine" style="position: center;" *ngIf="isChartLoadedForFirstTime && stockMarketModel != null" ></chart>
+
+    <br>
+    <br>
 
     <mat-accordion *ngIf="stockMarketModel != null" >
 
@@ -45,57 +65,233 @@
         </mat-expansion-panel-header>
 
         <mat-list role="list" *ngFor="let stock of sector.stocks">
-          <mat-list-item role="listitem">{{stock.companyName + " (" + stock.stock + " : " + returnRoundPrice(stock.price[9]) + ")"}}&nbsp; &nbsp;<button (click)="loadChart(stock)" style="margin-left:auto; margin-right:0; display:block" matTooltip="Load to Stock Chart" mat-raised-button color="accent">Load</button></mat-list-item>
+          <mat-list-item role="listitem">{{stock.companyName + " (" + stock.stock + " : " + returnRoundPrice(stock.price[currentArrayNumberForChart-1]) + ")"}}&nbsp; &nbsp;<button (click)="loadChart(stock)" style="margin-left:auto; margin-right:0; display:block" matTooltip="Load to Stock Chart" mat-raised-button color="accent">Load</button></mat-list-item>
         </mat-list>
 
       </mat-expansion-panel>
 
     </mat-accordion>
 
-    <!--//stock buy and sell-->
 
-    <!--real time transactions of other players-->
 
-    <h5 style="color:#3f3f3f" *ngIf="!readyButtonHiddenState">Current Transactions of Other Players</h5>
+    <!--stock buy and sell-->
+    <br>
+    <br>
 
-    <table mat-table [dataSource]="playerTransactionsOfTurnList" class="mat-elevation-z8">
-      <!-- Name Column -->
-      <ng-container matColumnDef="name">
-        <th mat-header-cell *matHeaderCellDef style="text-align: center"> Player </th>
-        <td mat-cell *matCellDef="let element"> {{element.name}}</td>
-      </ng-container>
+    <mat-card *ngIf="stockName != null">
 
-      <!-- SellOrBuy Column -->
-      <ng-container matColumnDef="sellOrBuy">
-        <th mat-header-cell *matHeaderCellDef style="text-align: center"> Transaction </th>
-        <td mat-cell *matCellDef="let element"> {{element.sellOrBuy}}</td>
-      </ng-container>
+      <h3 style="align-content:left; text-align:left; color:#d8d8d8">Selected Stock : {{stockName}}</h3>
+      <h3 style="align-content:left; text-align:left; color:#d8d8d8" *ngIf="stockDataArray.length != 0">Current Value : {{returnRoundPrice(stockDataArray[currentArrayNumberForChart-1])}}</h3>
 
+      <form>
+        <table>
+          <tr>
+            <td colspan="4">
+              <h4 style="align-content:left; text-align:left; color:#d8d8d8">Buy</h4>
+            </td>
+          </tr>
+
+          <tr>
+
+            <td>
+              <span>{{stockName}}</span>
+            </td>
+
+            <td>
+              <span *ngIf="stockDataArray.length != 0">({{returnRoundPrice(stockDataArray[currentArrayNumberForChart-1])}})</span>
+            </td>
+
+            <td>
+              <mat-form-field style="width: 50px;" color="accent">
+                <input matInput type="number" placeholder="Qty" min="1" step="1" value="1" (keydown)="$event.preventDefault();" #buyQuantity>
+              </mat-form-field>
+            </td>
+
+            <td>
+              <button mat-raised-button color="primary" (click)="buyRequest(stockName, stringToInt(buyQuantity.value), stockDataArray[currentArrayNumberForChart-1])">Buy</button>
+            </td>
+
+          </tr>
+
+          <tr>
+            <td colspan="4">
+              (If you buy {{buyQuantity.value}} stocks of {{stockName}} you will be charged {{returnRoundPrice(stockDataArray[currentArrayNumberForChart-1] * stringToInt(buyQuantity.value))}})
+            </td>
+          </tr>
+
+          <tr>
+            <td colspan="4">
+              <h4 style="align-content:left; text-align:left; color:#d8d8d8">Sell</h4>
+            </td>
+          </tr>
+
+          <tr>
+
+            <td>
+              <span>{{stockName}}</span>
+            </td>
+
+            <td>
+              <span *ngIf="stockDataArray.length != 0">({{returnRoundPrice(stockDataArray[currentArrayNumberForChart-1])}})</span>
+            </td>
+
+            <td>
+              <mat-form-field style="width: 50px;" color="accent">
+                <input matInput type="number" placeholder="Qty" min="1" step="1" value="1" (keydown)="$event.preventDefault();" #sellQuantity>
+              </mat-form-field>
+            </td>
+
+            <td>
+              <button mat-raised-button color="warn" style="align-content: right" (click)="sellRequest(stockName, stringToInt(sellQuantity.value), stockDataArray[currentArrayNumberForChart-1])">Sell</button>
+            </td>
+
+          </tr>
+
+          <tr>
+            <td colspan="4">
+              (If you sell {{sellQuantity.value}} stocks of {{stockName}} you will receive {{returnRoundPrice(stockDataArray[currentArrayNumberForChart-1] * stringToInt(sellQuantity.value))}})
+            </td>
+          </tr>
+        </table>
+      </form>
+
+      <h3 style="align-content:left; text-align:left; color:#d8d8d8">Your {{profileBalance>=playerInitialBalance ? "Earnings" :"Loses"}} : {{returnRoundPrice(profileBalance - playerInitialBalance)}}</h3>
+
+    </mat-card>
+
+
+
+    <!--bank balance and currently own stock-->
+    <br>
+    <br>
+
+    <h4 style="color:#3f3f3f">Your Profile Status</h4>
+
+    <h5 style="color:#3f3f3f">Your Balance : {{returnRoundPrice(profileBalance)}}</h5>
+
+    <table mat-table [dataSource]="ownStockList" class="mat-elevation-z8">
       <!-- Stock Column -->
       <ng-container matColumnDef="stock">
-        <th mat-header-cell *matHeaderCellDef style="text-align: center"> Stock Name </th>
+        <th mat-header-cell *matHeaderCellDef style="text-align: center"> Stock Name</th>
         <td mat-cell *matCellDef="let element"> {{element.stock}}</td>
       </ng-container>
 
       <!-- Quantity Column -->
       <ng-container matColumnDef="quantity">
-        <th mat-header-cell *matHeaderCellDef style="text-align: center"> Quantity </th>
+        <th mat-header-cell *matHeaderCellDef style="text-align: center"> Quantity</th>
         <td mat-cell *matCellDef="let element"> {{element.quantity}}</td>
+      </ng-container>
+
+      <tr mat-header-row *matHeaderRowDef="ownStockListDisplayedColumns"></tr>
+      <tr mat-row *matRowDef="let row; columns: ownStockListDisplayedColumns;"></tr>
+    </table>
+
+    <mat-card *ngIf="ownStockList.length == 0" >
+      No Data
+    </mat-card>
+
+
+
+    <!--real time transactions of other players-->
+    <br>
+    <br>
+
+    <h4 style="color:#3f3f3f">Current Transactions of Other Players</h4>
+
+    <table mat-table [dataSource]="playerTransactionsOfTurnList" class="mat-elevation-z8">
+      <!-- Name Column -->
+      <ng-container matColumnDef="name">
+        <th mat-header-cell *matHeaderCellDef style="text-align: center"> Player </th>
+        <td mat-cell *matCellDef="let element" [ngStyle]="{'background' : element.name===playerName ? '#5B5B5B' : null}"> {{element.name}}</td>
+      </ng-container>
+
+      <!-- SellOrBuy Column -->
+      <ng-container matColumnDef="sellOrBuy">
+        <th mat-header-cell *matHeaderCellDef style="text-align: center"> Transaction </th>
+        <td mat-cell *matCellDef="let element" [ngStyle]="{'background' : element.name===playerName ? '#5B5B5B' : null}"> {{element.sellOrBuy}}</td>
+      </ng-container>
+
+      <!-- Stock Column -->
+      <ng-container matColumnDef="stock">
+        <th mat-header-cell *matHeaderCellDef style="text-align: center"> Stock Name </th>
+        <td mat-cell *matCellDef="let element" [ngStyle]="{'background' : element.name===playerName ? '#5B5B5B' : null}"> {{element.stock}}</td>
+      </ng-container>
+
+      <!-- Quantity Column -->
+      <ng-container matColumnDef="quantity">
+        <th mat-header-cell *matHeaderCellDef style="text-align: center"> Quantity </th>
+        <td mat-cell *matCellDef="let element" [ngStyle]="{'background' : element.name===playerName ? '#5B5B5B' : null}"> {{element.quantity}}</td>
       </ng-container>
 
       <!-- StockPrice Column -->
       <ng-container matColumnDef="stockPrice">
         <th mat-header-cell *matHeaderCellDef style="text-align: center"> Stock Price </th>
-        <td mat-cell *matCellDef="let element"> {{returnRoundPrice(element.stockPrice)}}</td>
+        <td mat-cell *matCellDef="let element" [ngStyle]="{'background' : element.name===playerName ? '#5B5B5B' : null}"> {{returnRoundPrice(element.stockPrice)}}</td>
       </ng-container>
 
       <tr mat-header-row *matHeaderRowDef="playerTransactionsOfTurnListDisplayedColumns"></tr>
       <tr mat-row *matRowDef="let row; columns: playerTransactionsOfTurnListDisplayedColumns;"></tr>
     </table>
+
     <mat-card>
       <div class="fa-3x icon-color">
         <i class="fas fa-cog fa-spin"></i>
       </div>
+    </mat-card>
+
+
+    <!--analyser recommendations-->
+
+    <mat-chip-list *ngIf="currentArrayNumber < 10 && !analyserRecommendationRemoveChip && analyserRecommendationArray.length != 0 && !isStringEmpty(analyserRecommendationArray[currentArrayNumber])" style="z-index:1002; position: fixed; left: 50%; top: 15px">
+      <mat-chip color="accent" [selected]="true" [removable]="!analyserRecommendationRemoveChip" style="position: relative; left:-50%">
+        Analyser Says: {{analyserRecommendationArray[currentArrayNumber]}}
+      <mat-icon matChipRemove *ngIf="!analyserRecommendationRemoveChip"><i class="fas fa-times-circle" (click)="analyserRecommendationRemoveChip = true"></i></mat-icon>
+      </mat-chip>
+    </mat-chip-list>
+
+  </div>
+
+  <div *ngIf="!scoreBoardDivHiddenState" #scoreboardDiv>
+
+    <!--final scores of the players-->
+
+    <h4 style="color:#3f3f3f">Final Scores of the Players</h4>
+
+    <div class="fa-3x icon-color" *ngIf="playerScoreboardList == null">
+      <i class="fas fa-cog fa-spin-reverse"></i>
+    </div>
+
+    <table *ngIf="playerScoreboardList != null" mat-table [dataSource]="playerScoreboardList" class="mat-elevation-z8">
+      <!-- Name Column -->
+      <ng-container matColumnDef="name">
+        <th mat-header-cell *matHeaderCellDef style="text-align: center"> Player </th>
+        <td mat-cell *matCellDef="let element" [ngStyle]="{'background' : element.name===playerName ? '#5B5B5B' : null}"> {{element.name}}</td>
+      </ng-container>
+
+      <!-- Start Balance Column -->
+      <ng-container matColumnDef="startBalance">
+        <th mat-header-cell *matHeaderCellDef style="text-align: center"> Initial Balance </th>
+        <td mat-cell *matCellDef="let element" [ngStyle]="{'background' : element.name===playerName ? '#5B5B5B' : null}"> {{element.startBalance}}</td>
+      </ng-container>
+
+      <!-- End Balance Column -->
+      <ng-container matColumnDef="endBalance">
+        <th mat-header-cell *matHeaderCellDef style="text-align: center"> Final Balance</th>
+        <td mat-cell *matCellDef="let element" [ngStyle]="{'background' : element.name===playerName ? '#5B5B5B' : null}"> {{element.endBalance}}</td>
+      </ng-container>
+
+      <!-- Profit Column -->
+      <ng-container matColumnDef="profit">
+        <th mat-header-cell *matHeaderCellDef style="text-align: center"> Profit </th>
+        <td mat-cell *matCellDef="let element" [ngStyle]="{'background' : element.name===playerName ? '#5B5B5B' : null}"> {{element.profit}}</td>
+      </ng-container>
+
+      <tr mat-header-row *matHeaderRowDef="playerScoreboardListDisplayedColumns"></tr>
+      <tr mat-row *matRowDef="let row; columns: playerScoreboardListDisplayedColumns;"></tr>
+    </table>
+
+    <mat-card *ngIf="playerScoreboardList.length == 0">
+      No Scores
     </mat-card>
 
   </div>
