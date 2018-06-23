@@ -8,6 +8,8 @@ import {TimerObservable} from "rxjs-compat/observable/TimerObservable";
 import {Stock, StockMarketModel} from "../../models/StockMarketModel";
 import {OwnStockList} from "../../models/PortfolioModel";
 import {Score} from "../../models/Scoreboard";
+import {GamestatusService} from "../../services/gamestatus.service";
+import * as Confeti from '../../../assets/confeti.js';
 
 @Component({
   selector: 'app-simulator',
@@ -74,11 +76,14 @@ export class SimulatorComponent implements OnInit {
 
   //scoreboard variables
   //initial value should be null because sometimes if any player didn't do transaction in the game response will be empty
-  playerScoreboardList: Score[] = null;
+  public isScoreLoadingComplete: boolean = false;
+  playerScoreboardList: Score[] = [];
   playerScoreboardListDisplayedColumns = ['name', 'startBalance', 'endBalance', 'profit'];
 
-  constructor(private authS: AuthService, private simulatorRequests: HttprequestService, private router: Router, private snackBar: MatSnackBar) {
+  constructor(private authS: AuthService, private simulatorRequests: HttprequestService, private router: Router, private snackBar: MatSnackBar, private gamestatusService: GamestatusService) {
+
   }
+
 
   ngOnInit() {
   }
@@ -142,8 +147,11 @@ export class SimulatorComponent implements OnInit {
           if (this.gameTimeReducerTimerSubscriber != null)
             this.gameTimeReducerTimerSubscriber.unsubscribe();
 
+          //hide the game div
+          this.gameDivHiddenState = true;
+
           //get score board
-          this.getScoreBoard();
+          this.getScoreboard();
 
         } else {
 
@@ -173,7 +181,7 @@ export class SimulatorComponent implements OnInit {
   }
 
 
-  private getScoreBoard() {
+  private getScoreboard() {
 
     this.getScoreboardRequest();
     this.scoreBoardDivHiddenState = false;
@@ -182,11 +190,10 @@ export class SimulatorComponent implements OnInit {
       //waiting before resetting state
       //reset all the values to initial state
       this.resetSimulator();
+      Confeti.animationOffFuncE();
 
     }, 10000);
 
-    //enables surrounding buttons
-    this.enableAllSurroundings();
 
   }
 
@@ -357,7 +364,7 @@ export class SimulatorComponent implements OnInit {
           this.getPortfolioRequest();
         }
       }, error => {
-        this.openSnackBar("Cannot buy. Check quantity, stock price and your bank balance");
+        this.openSnackBar("Cannot buy. Check quantity, stock price and your bank balance (No two transaction per turn)");
       }
     )
   }
@@ -374,7 +381,7 @@ export class SimulatorComponent implements OnInit {
           this.getPortfolioRequest();
         }
       }, error => {
-        this.openSnackBar("Cannot sell. Check selling stock quantity with your currently own stocks");
+        this.openSnackBar("Cannot sell. Check selling stock quantity with your currently own stocks (No two transaction per turn)");
       }
     )
   }
@@ -389,12 +396,30 @@ export class SimulatorComponent implements OnInit {
   }
 
   private getScoreboardRequest() {
+
     this.simulatorRequests.getScoreBoard(this.serverStartTurn).subscribe(
       res => {
-        this.playerScoreboardList = res.score;
+        this.playerScoreboardList = res.score.sort(this.compareProfit);
+
+        //check if the winner is logged in user. if so display celebration animation
+        if (this.playerScoreboardList.length > 0 && this.playerScoreboardList[0].name.localeCompare(this.playerName) == 0) {
+          Confeti.confetiAnimationE();
+          Confeti.animationOnFuncE();
+        }
+
+        this.isScoreLoadingComplete = true;
+
       }
     )
 
+  }
+
+  private compareProfit(a, b) {
+    if (a.profit < b.profit)
+      return 1;
+    if (a.profit > b.profit)
+      return -1;
+    return 0;
   }
 
   private resetSimulator() {
@@ -442,7 +467,11 @@ export class SimulatorComponent implements OnInit {
     this.analyserRecommendationRemoveChip = false;
 
     //scoreboard
-    this.playerScoreboardList = null;
+    this.isScoreLoadingComplete = false;
+    this.playerScoreboardList = [];
+
+    //enables surrounding buttons
+    this.enableAllSurroundings();
 
   }
 
@@ -465,10 +494,10 @@ export class SimulatorComponent implements OnInit {
   }
 
   disableAllSurroundings() {
-    this.authS.gameSurroundingState$.next(true);
+    this.gamestatusService.gameSurroundingState$.next(true);
   }
 
   enableAllSurroundings() {
-    this.authS.gameSurroundingState$.next(false);
+    this.gamestatusService.gameSurroundingState$.next(false);
   }
 }

@@ -10,10 +10,8 @@ import {HttprequestService} from "../services/httprequest.service";
 export class AuthService {
 
   static UNKNOWN_USER = new AuthInfo(null);
-  static GAME_SURROUNDING_STATUS : boolean = false;
 
   authInfo$: BehaviorSubject<AuthInfo> = new BehaviorSubject<AuthInfo>(AuthService.UNKNOWN_USER);
-  gameSurroundingState$: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(AuthService.GAME_SURROUNDING_STATUS);
 
   public static userLoggedIn : boolean;
   public static loggedInUsername : string;

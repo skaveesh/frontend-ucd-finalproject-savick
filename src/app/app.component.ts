@@ -1,5 +1,6 @@
 import {Component} from '@angular/core';
 import {AuthService} from "./security/auth.service";
+import {GamestatusService} from "./services/gamestatus.service";
 
 @Component({
   selector: 'app-root',
@@ -15,7 +16,7 @@ export class AppComponent {
 
   public surroundingDisable : boolean = false;
 
-  constructor(private authService:AuthService){
+  constructor(private authService:AuthService, private gamestatusService:GamestatusService){
     this.authService.authInfo$.subscribe(
       (info) =>{
         this.userLoggedIn = info.isLoggedIn();
@@ -23,7 +24,7 @@ export class AppComponent {
       }
     );
 
-    this.authService.gameSurroundingState$.subscribe(
+    this.gamestatusService.gameSurroundingState$.subscribe(
       (info) =>{
         this.surroundingDisable = info;
       }
