@@ -2,6 +2,6 @@ export interface CreateBrokerAccountFromName {
   name: string;
 }
 
-export interface CreateBrokerAccount {
+export interface CreateBrokerAccountModel {
   createBrokerAccountFromName: CreateBrokerAccountFromName;
 }

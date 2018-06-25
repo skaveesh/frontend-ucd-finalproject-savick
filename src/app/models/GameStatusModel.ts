@@ -91,7 +91,7 @@ export interface Turn10 {
   stockPrice: number;
 }
 
-export interface GameStatus {
+export interface GameStatusModel {
   isGameReadyToStart: boolean;
   isGameStarted: boolean;
   gameStartTurn: number;

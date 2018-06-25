@@ -21,7 +21,7 @@ textarea:focus, input:focus {
   color: #dfdfdf;
 }
 
-.view-port-center { /* can also be whatever container */
+.view-port-center {
   display: -webkit-flex;
   display: flex;
   -webkit-align-items: center;

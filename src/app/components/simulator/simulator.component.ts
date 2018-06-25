@@ -3,11 +3,11 @@ import {AuthService} from "../../security/auth.service";
 import {HttprequestService} from "../../services/httprequest.service";
 import {MatSnackBar, MatSnackBarConfig} from "@angular/material";
 import {Router} from "@angular/router";
-import {GameStatus, Player, Turn} from "../../models/GameStatus";
+import {GameStatusModel, Player, Turn} from "../../models/GameStatusModel";
 import {TimerObservable} from "rxjs-compat/observable/TimerObservable";
 import {Stock, StockMarketModel} from "../../models/StockMarketModel";
 import {OwnStockList} from "../../models/PortfolioModel";
-import {Score} from "../../models/Scoreboard";
+import {Score} from "../../models/ScoreboardModel";
 import {GamestatusService} from "../../services/gamestatus.service";
 import * as Confeti from '../../../assets/confeti.js';
 
@@ -20,40 +20,40 @@ export class SimulatorComponent implements OnInit {
 
   public readonly TIME_FOR_EACH_TURN_IN_SEC: number = 10;
 
-  gameStatusObject: GameStatus = null;
+  private gameStatusObject: GameStatusModel = null;
 
   public playerName: string = AuthService.getLoggedInUsername();
   public playerInitialBalance: number = 0;
 
-  currentTurn: number = 1;
-  currentArrayNumber = this.currentTurn - 1;
-  currentArrayNumberForChart = 9 + this.currentTurn;
-  currentTimeInSecWithinTurn = this.TIME_FOR_EACH_TURN_IN_SEC;
+  public currentTurn: number = 1;
+  public currentArrayNumber = this.currentTurn - 1;
+  public currentArrayNumberForChart = 9 + this.currentTurn;
+  public currentTimeInSecWithinTurn = this.TIME_FOR_EACH_TURN_IN_SEC;
 
-  serverStartTurn: number = 0;
+  private serverStartTurn: number = 0;
 
-  disableReadyButton: boolean = false;
-  readyDivHiddenState: boolean = false;
-  readyButtonHiddenState: boolean = false;
-  gameDivHiddenState: boolean = true;
-  scoreBoardDivHiddenState = true;
+  public disableReadyButton: boolean = false;
+  private readyDivHiddenState: boolean = false;
+  public readyButtonHiddenState: boolean = false;
+  private gameDivHiddenState: boolean = true;
+  private scoreBoardDivHiddenState = true;
 
-  readyButtonText: string = "Ready";
+  public readyButtonText: string = "Ready";
 
-  isReadyGameRequestSuccessful: boolean = false;
-  gameTurnTimerFunctionStartedExecuting: boolean = false;
+  private isReadyGameRequestSuccessful: boolean = false;
+  private gameTurnTimerFunctionStartedExecuting: boolean = false;
 
-  gameStatusCallTimer = TimerObservable.timer(0, 1000);
-  gameStatusCallTimerSubscriber: any = null;
+  private gameStatusCallTimer = TimerObservable.timer(0, 1000);
+  private gameStatusCallTimerSubscriber: any = null;
 
-  gameTimeReducerTimer = TimerObservable.timer(0, 1000);
-  gameTimeReducerTimerSubscriber: any = null;
+  private gameTimeReducerTimer = TimerObservable.timer(0, 1000);
+  private gameTimeReducerTimerSubscriber: any = null;
 
-  playerList: Player[] = [];
-  playerListDisplayedColumns = ['players'];
+  public playerList: Player[] = [];
+  public playerListDisplayedColumns = ['players'];
 
-  playerTransactionsOfTurnList: Turn[] = [];
-  playerTransactionsOfTurnListDisplayedColumns = ['name', 'sellOrBuy', 'stock', 'quantity', 'stockPrice'];
+  public playerTransactionsOfTurnList: Turn[] = [];
+  public playerTransactionsOfTurnListDisplayedColumns = ['name', 'sellOrBuy', 'stock', 'quantity', 'stockPrice'];
 
   //stock chart variables
   public isChartLoadedForFirstTime = false;
@@ -77,39 +77,44 @@ export class SimulatorComponent implements OnInit {
   //scoreboard variables
   //initial value should be null because sometimes if any player didn't do transaction in the game response will be empty
   public isScoreLoadingComplete: boolean = false;
-  playerScoreboardList: Score[] = [];
-  playerScoreboardListDisplayedColumns = ['name', 'startBalance', 'endBalance', 'profit'];
+  public playerScoreboardList: Score[] = [];
+  public playerScoreboardListDisplayedColumns = ['name', 'startBalance', 'endBalance', 'profit'];
 
   constructor(private authS: AuthService, private simulatorRequests: HttprequestService, private router: Router, private snackBar: MatSnackBar, private gamestatusService: GamestatusService) {
-
   }
-
 
   ngOnInit() {
   }
 
   readyGame() {
 
-    this.gameStatus();
-    this.disableReadyButton = true;
-    this.readyButtonText = "Please Wait...";
+    //check existence of bank and broker account
+    if(this.checkBankAndBrokerAccountExistsRequest) {
 
-    setTimeout(() => {
-      this.disableReadyButton = false;
-      this.readyButtonText = "Ready";
+      this.gameStatus();
+      this.disableReadyButton = true;
+      this.readyButtonText = "Please Wait...";
 
-      if (this.gameStatusObject != null && !this.gameStatusObject.isGameStarted)
-        this.readyGameRequest();
-      else if (this.gameStatusObject.isGameStarted) {
-        this.openSnackBar("Game has already started. Try to join again in few minutes.");
-        if (this.gameStatusCallTimerSubscriber != null)
-          this.gameStatusCallTimerSubscriber.unsubscribe();
-      } else {
-        this.openSnackBar("Please wait and try again.");
-        if (this.gameStatusCallTimerSubscriber != null)
-          this.gameStatusCallTimerSubscriber.unsubscribe();
-      }
-    }, 3000);
+      setTimeout(() => {
+        this.disableReadyButton = false;
+        this.readyButtonText = "Ready";
+
+        if (this.gameStatusObject != null && !this.gameStatusObject.isGameStarted)
+          this.readyGameRequest();
+        else if (this.gameStatusObject.isGameStarted) {
+          this.openSnackBar("Game has already started. Try to join again in few minutes.");
+          if (this.gameStatusCallTimerSubscriber != null)
+            this.gameStatusCallTimerSubscriber.unsubscribe();
+        } else {
+          this.openSnackBar("Please wait and try again.");
+          if (this.gameStatusCallTimerSubscriber != null)
+            this.gameStatusCallTimerSubscriber.unsubscribe();
+        }
+      }, 3000);
+
+    }else{
+      this.openSnackBar("You should create Bank and Broker account to play.");
+    }
 
   }
 
@@ -273,7 +278,7 @@ export class SimulatorComponent implements OnInit {
   }
 
   private readyGameRequest() {
-    this.simulatorRequests.readyPlayer(AuthService.getLoggedInUsername()).subscribe(
+    this.simulatorRequests.readyPlayer(this.playerName).subscribe(
       res => {
         if (res.status == 200) {
           this.isReadyGameRequestSuccessful = this.readyButtonHiddenState = true;
@@ -336,7 +341,7 @@ export class SimulatorComponent implements OnInit {
   //get portfolio to get current own stock
   //get bank account balance
   private getPortfolioRequest() {
-    this.simulatorRequests.getPortfolioFromBroker(AuthService.getLoggedInUsername()).subscribe(
+    this.simulatorRequests.getPortfolioFromBroker(this.playerName).subscribe(
       res => {
         this.ownStockList = res.portfolio.ownStockList;
       }
@@ -344,7 +349,7 @@ export class SimulatorComponent implements OnInit {
   }
 
   private getBankBalanceRequest() {
-    this.simulatorRequests.getBankBalance(AuthService.getLoggedInUsername()).subscribe(
+    this.simulatorRequests.getBankBalance(this.playerName).subscribe(
       res => {
         this.profileBalance = res.balanceAmount.amount;
       }
@@ -356,7 +361,7 @@ export class SimulatorComponent implements OnInit {
   //then refresh portfolio
   //then refresh bank account balance
   public buyRequest(stock: string, quantity: number, price: number) {
-    this.simulatorRequests.buyFromBroker(AuthService.getLoggedInUsername(), stock, quantity, price).subscribe(
+    this.simulatorRequests.buyFromBroker(this.playerName, stock, quantity, price).subscribe(
       res => {
         if (res.status == 200) {
           this.openSnackBar("Transaction successful!");
@@ -373,7 +378,7 @@ export class SimulatorComponent implements OnInit {
   //then refresh portfolio
   //then refresh bank account balance
   public sellRequest(stock: string, quantity: number, price: number) {
-    this.simulatorRequests.sellThroughBroker(AuthService.getLoggedInUsername(), stock, quantity, price).subscribe(
+    this.simulatorRequests.sellThroughBroker(this.playerName, stock, quantity, price).subscribe(
       res => {
         if (res.status == 200) {
           this.openSnackBar("Transaction successful!");
@@ -395,11 +400,28 @@ export class SimulatorComponent implements OnInit {
     )
   }
 
+  private checkBankAndBrokerAccountExistsRequest(){
+
+    this.simulatorRequests.checkExistenceOfBankAccount(this.playerName).then(
+      res=>{
+
+        if(res.value){
+          this.simulatorRequests.checkExistenceOfBrokerAccount(this.playerName).then(
+            res=>{
+              console.log(res.value);
+              return res.value;
+            });
+        }else
+          return res.value;
+      });
+  }
+
   private getScoreboardRequest() {
 
     this.simulatorRequests.getScoreBoard(this.serverStartTurn).subscribe(
       res => {
-        this.playerScoreboardList = res.score.sort(this.compareProfit);
+        //already sorted with profit high to low
+        this.playerScoreboardList = res.score;
 
         //check if the winner is logged in user. if so display celebration animation
         if (this.playerScoreboardList.length > 0 && this.playerScoreboardList[0].name.localeCompare(this.playerName) == 0) {
@@ -414,13 +436,7 @@ export class SimulatorComponent implements OnInit {
 
   }
 
-  private compareProfit(a, b) {
-    if (a.profit < b.profit)
-      return 1;
-    if (a.profit > b.profit)
-      return -1;
-    return 0;
-  }
+
 
   private resetSimulator() {
     this.currentTurn = 1;

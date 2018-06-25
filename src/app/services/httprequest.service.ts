@@ -5,16 +5,17 @@ import {Authorization, PlayerLoginModel} from "../models/PlayerLoginModel";
 import {CreatePlayerAccountForName, PlayerCreateModel} from "../models/PlayerCreateModel";
 import {Observable} from "rxjs/Observable";
 import {StockMarketModel} from "../models/StockMarketModel";
-import {BooleanValue} from "../models/BooleanValue";
-import {CreateBrokerAccount, CreateBrokerAccountFromName} from "../models/CreateBrokerAccount";
-import {CreateBankAccount, CreateBankAccountFromName} from "../models/CreateBankAccount";
+import {BooleanValueModel} from "../models/BooleanValueModel";
+import {CreateBrokerAccountModel, CreateBrokerAccountFromName} from "../models/CreateBrokerAccountModel";
+import {CreateBankAccountModel, CreateBankAccountFromName} from "../models/CreateBankAccountModel";
 import {PortfolioModel} from "../models/PortfolioModel";
 import {ProfileModel} from "../models/ProfileModel";
-import {GameStatus} from "../models/GameStatus";
-import {AnalyserRecommendations} from "../models/AnalyserRecommendations";
-import {BankBalance} from "../models/BankBalance";
-import {Buy, BuyObjectRoot, Sell, SellObjectRoot, StockAndUserDetails} from "../models/BuyAndSell";
-import {Scoreboard} from "../models/Scoreboard";
+import {GameStatusModel} from "../models/GameStatusModel";
+import {AnalyserRecommendationsModel} from "../models/AnalyserRecommendationsModel";
+import {BankBalanceModel} from "../models/BankBalanceModel";
+import {Buy, BuyObjectRoot, Sell, SellObjectRoot, StockAndUserDetails} from "../models/BuyAndSellModel";
+import {ScoreboardModel} from "../models/ScoreboardModel";
+import {RankingModel} from "../models/RankingModel";
 
 @Injectable({
   providedIn: 'root'
@@ -94,9 +95,9 @@ export class HttprequestService {
 
   /**
    * check if logged user has a bank account
-   * @returns {Observable<BooleanValue>}
+   * @returns {Observable<BooleanValueModel>}
    */
-  checkExistenceOfBankAccount(username: string): Promise<BooleanValue> {
+  checkExistenceOfBankAccount(username: string): Promise<BooleanValueModel> {
     const get_bank_existence_url = this.ROOT_URL + "bank/account/check/" + username;
 
     return this.http.post(get_bank_existence_url, null, {
@@ -116,7 +117,7 @@ export class HttprequestService {
       name: username
     };
 
-    let createBankAccount: CreateBankAccount = {
+    let createBankAccount: CreateBankAccountModel = {
       createBankAccountFromName: createBankAccountFromName
     };
 
@@ -143,9 +144,9 @@ export class HttprequestService {
   /**
    * get user bank account balance
    * @param {string} username
-   * @returns {Observable<BankBalance>}
+   * @returns {Observable<BankBalanceModel>}
    */
-  getBankBalance(username: string): Observable<BankBalance> {
+  getBankBalance(username: string): Observable<BankBalanceModel> {
     const get_bank_balance_url = this.ROOT_URL + "bank/account/balance/" + username;
 
     return this.http.post(get_bank_balance_url, null, {
@@ -155,9 +156,9 @@ export class HttprequestService {
 
   /**
    * check if logged user has a broker account
-   * @returns {Observable<BooleanValue>}
+   * @returns {Observable<BooleanValueModel>}
    */
-  checkExistenceOfBrokerAccount(username: string): Promise<BooleanValue> {
+  checkExistenceOfBrokerAccount(username: string): Promise<BooleanValueModel> {
     const get_broker_existence_url = this.ROOT_URL + "broker/account/check/" + username;
 
     return this.http.post(get_broker_existence_url, null, {
@@ -177,7 +178,7 @@ export class HttprequestService {
       name: username
     };
 
-    let createBrokerAccount: CreateBrokerAccount = {
+    let createBrokerAccount: CreateBrokerAccountModel = {
       createBrokerAccountFromName: createBrokerAccountFromName
     };
 
@@ -280,9 +281,9 @@ export class HttprequestService {
 
   /**
    * send timely request to the server to get the status of the game
-   * @returns {Observable<GameStatus>}
+   * @returns {Observable<GameStatusModel>}
    */
-  getGameStatus(): Observable<GameStatus> {
+  getGameStatus(): Observable<GameStatusModel> {
     const get_game_status_url = this.ROOT_URL + "game/status";
 
     return this.http.post(get_game_status_url, null, {
@@ -292,9 +293,9 @@ export class HttprequestService {
 
   /**
    * get analyser recommendation about the game
-   * @returns {Observable<AnalyserRecommendations>}
+   * @returns {Observable<AnalyserRecommendationsModel>}
    */
-  getAnalyserRecommendations(): Observable<AnalyserRecommendations> {
+  getAnalyserRecommendations(): Observable<AnalyserRecommendationsModel> {
     const get_analyser_recommendation_url = this.ROOT_URL + "game/analyser/recommendation";
 
     return this.http.post(get_analyser_recommendation_url, null, {
@@ -305,12 +306,24 @@ export class HttprequestService {
   /**
    * get final scoreboard of the players
    * @param {number} serverTurn
-   * @returns {Observable<Scoreboard>}
+   * @returns {Observable<ScoreboardModel>}
    */
-  getScoreBoard(serverTurn : number): Observable<Scoreboard> {
+  getScoreBoard(serverTurn : number): Observable<ScoreboardModel> {
     const get_scoreboard_url = this.ROOT_URL + "player/scoreboard/" + serverTurn;
 
     return this.http.post(get_scoreboard_url, null, {
+      headers: this.jsonHeader
+    }).catch(this.handleErrorObservable);
+  }
+
+  /**
+   * get rankings of the players, limit to first 10 players
+   * @returns {Observable<RankingModel>}
+   */
+  getRankings(): Observable<RankingModel> {
+    const get_ranking_url = this.ROOT_URL + "player/ranking";
+
+    return this.http.post(get_ranking_url, null, {
       headers: this.jsonHeader
     }).catch(this.handleErrorObservable);
   }

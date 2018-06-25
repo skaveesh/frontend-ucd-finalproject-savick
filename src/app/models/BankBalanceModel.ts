@@ -2,6 +2,6 @@ export interface BalanceAmount {
   amount: number;
 }
 
-export interface BankBalance {
+export interface BankBalanceModel {
   balanceAmount: BalanceAmount;
 }

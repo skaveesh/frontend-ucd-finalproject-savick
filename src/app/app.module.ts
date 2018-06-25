@@ -32,6 +32,9 @@ import { SignupComponent } from './components/signup/signup.component';
 import {ChartModule} from "angular2-highcharts";
 import { HighchartsStatic } from 'angular2-highcharts/dist/HighchartsService';
 import * as highcharts from 'highcharts/highstock';
+import { WildcardComponent } from './components/wildcard/wildcard.component';
+import { RankingComponent } from './components/ranking/ranking.component';
+import { DeveloperComponent } from './components/developer/developer.component';
 
 export function highchartsFactory() {
   return highcharts;
@@ -45,7 +48,10 @@ export function highchartsFactory() {
     SimulatorComponent,
     PortfolioComponent,
     StocksComponent,
-    SignupComponent
+    SignupComponent,
+    WildcardComponent,
+    RankingComponent,
+    DeveloperComponent
   ],
   imports: [
     BrowserModule,
@@ -98,8 +104,20 @@ export function highchartsFactory() {
         component: StocksComponent
       },
       {
+        path: 'rankings',
+        component: RankingComponent
+      },
+      {
+        path: 'developers',
+        component: DeveloperComponent
+      },
+      {
         path: '',
         component: LoginComponent
+      },
+      {
+        path: '**',
+        component: WildcardComponent
       }
     ])
   ],

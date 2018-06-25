@@ -2,11 +2,13 @@
   <mat-toolbar style="left:0; right:0">
     <mat-toolbar-row>
       <button mat-mini-fab color="accent" routerLink="/login" *ngIf="!userLoggedIn" matTooltip="Login" [disabled]="surroundingDisable"><i class="fas fa-sign-in-alt"></i></button>
-      <button mat-mini-fab color="accent" (click)="logout()" *ngIf="userLoggedIn" matTooltip="Logout {{loggedInUsername}}" [disabled]="surroundingDisable"><i class="fas fa-power-off"></i></button>
+      <button mat-mini-fab color="warn" (click)="logout()" *ngIf="userLoggedIn" matTooltip="Logout {{loggedInUsername}}" [disabled]="surroundingDisable"><i class="fas fa-power-off"></i></button>
       <button mat-mini-fab color="accent" class="btn-margin" routerLink="/simulator" matTooltip="Simulator" [disabled]="surroundingDisable"><i class="fas fa-dice"></i></button>
       <button mat-mini-fab color="accent" routerLink="/profile" matTooltip="Bank Profile" [disabled]="surroundingDisable"><i class="fas fa-money-check-alt"></i></button>
       <button mat-mini-fab color="accent" class="btn-margin" routerLink="/portfolio" matTooltip="Portfolio" [disabled]="surroundingDisable"><i class="fas fa-user"></i></button>
       <button mat-mini-fab color="accent" routerLink="/stocks" matTooltip="Stock Market" [disabled]="surroundingDisable"><i class="fas fa-chart-line"></i></button>
+      <button mat-mini-fab color="basic" class="btn-margin" routerLink="/rankings" matTooltip="Rankings" [disabled]="surroundingDisable"><i class="fas fa-trophy"></i></button>
+      <button mat-mini-fab color="basic" routerLink="/developers" matTooltip="Developers" [disabled]="surroundingDisable"><i class="fas fa-wrench"></i></button>
       <span class="fill-remaining-space"></span>
       <span style="font-size: 24px; color:#d0d0d0">{{ title }}!</span>
     </mat-toolbar-row>

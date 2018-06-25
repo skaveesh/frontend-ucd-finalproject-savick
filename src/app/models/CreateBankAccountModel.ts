@@ -2,6 +2,6 @@ export interface CreateBankAccountFromName {
   name: string;
 }
 
-export interface CreateBankAccount {
+export interface CreateBankAccountModel {
   createBankAccountFromName: CreateBankAccountFromName;
 }

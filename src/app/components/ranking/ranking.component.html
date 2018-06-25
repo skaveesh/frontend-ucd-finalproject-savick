@@ -1,0 +1,36 @@
+<div style="align-content:center; text-align: center">
+
+  <h2 style="color:#3f3f3f">Ranking of the Players</h2>
+  <h6 style="color:#3f3f3f">(Based on earned profit)</h6>
+
+  <div class="fa-3x icon-color" *ngIf="!isRankingLoadingComplete">
+    <i class="fas fa-cog fa-spin-reverse"></i>
+  </div>
+
+  <table *ngIf="isRankingLoadingComplete" mat-table [dataSource]="rankingList" class="mat-elevation-z8">
+    <!-- Name Column -->
+    <ng-container matColumnDef="name">
+      <th mat-header-cell *matHeaderCellDef style="text-align: center"> Player</th>
+      <td mat-cell *matCellDef="let element" style="width: 100px;"
+          [ngStyle]="{'background' : element.name===playerName ? '#5B5B5B' : null}"> {{element.name}}
+      </td>
+    </ng-container>
+
+    <!-- Profit Column -->
+    <ng-container matColumnDef="profit">
+      <th mat-header-cell *matHeaderCellDef style="text-align: center"> Profit</th>
+      <td mat-cell *matCellDef="let element" style="width: 100px;"
+          [ngStyle]="{'background' : element.name===playerName ? '#5B5B5B' : null}">
+        {{returnRoundPrice(element.profit)}}
+      </td>
+    </ng-container>
+
+    <tr mat-header-row *matHeaderRowDef="rankingListDisplayedColumns"></tr>
+    <tr mat-row *matRowDef="let row; columns: rankingListDisplayedColumns;"></tr>
+  </table>
+
+  <mat-card *ngIf="isRankingLoadingComplete && rankingList.length == 0">
+    No Rankings
+  </mat-card>
+
+</div>

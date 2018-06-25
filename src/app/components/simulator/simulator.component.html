@@ -5,13 +5,34 @@
 
   <div *ngIf="!readyDivHiddenState" #readyDiv>
 
+    <mat-card>
+      <h3>Game Rules</h3>
+      <div style="text-align: left">
+        <ol>
+          <li>There should be at least 3 players per game. (For testing purpose minimum number is now 2)</li>
+          <li>When player start the game player has 60 second waiting time to let other players to join the game.</li>
+          <li>There are 10 turn in the game and one turn lasts for only 30 seconds.</li>
+          <li>Players can buy or sell stock via broker.</li>
+          <li>Initially players are given an amount of $1000.</li>
+          <li>The price of a stock will change once per turn.</li>
+          <li>Players can buy or sell once within a turn.</li>
+          <li>When a player attempts to buy a stock the (stock price X stock quantity) must be lower than the bank balance of that user.</li>
+          <li>When a player attempts to sell a stock player should have the relevant stock in his account.</li>
+          <li>Goal is to earn maximum profit within the game.</li>
+        </ol>
+      </div>
+    </mat-card>
+
+    <br>
+    <br>
+
     <button *ngIf="!readyButtonHiddenState" mat-raised-button color="warn" (click)="readyGame()" [disabled]="disableReadyButton">{{readyButtonText}}</button>
 
     <table *ngIf="readyButtonHiddenState" mat-table [dataSource]="playerList" class="mat-elevation-z8">
       <!-- Players Column -->
       <ng-container matColumnDef="players">
         <th mat-header-cell *matHeaderCellDef style="text-align: center"> Player </th>
-        <td mat-cell *matCellDef="let element"> {{element.name}}</td>
+        <td mat-cell *matCellDef="let element" [ngStyle]="{'background' : element.name===playerName ? '#5B5B5B' : null}"> {{element.name}}</td>
       </ng-container>
 
       <tr mat-header-row *matHeaderRowDef="playerListDisplayedColumns"></tr>
@@ -292,7 +313,7 @@
       <tr mat-row *matRowDef="let row; columns: playerScoreboardListDisplayedColumns;"></tr>
     </table>
 
-    <mat-card *ngIf="playerScoreboardList.length == 0">
+    <mat-card *ngIf="isScoreLoadingComplete && playerScoreboardList.length == 0">
       No Scores
     </mat-card>
 

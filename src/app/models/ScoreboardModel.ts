@@ -5,6 +5,6 @@ export interface Score {
   profit: number;
 }
 
-export interface Scoreboard {
+export interface ScoreboardModel {
   score: Score[];
 }
