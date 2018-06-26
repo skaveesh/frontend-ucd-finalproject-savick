@@ -18,7 +18,7 @@ import * as Confeti from '../../../assets/confeti.js';
 })
 export class SimulatorComponent implements OnInit {
 
-  public readonly TIME_FOR_EACH_TURN_IN_SEC: number = 10;
+  public readonly TIME_FOR_EACH_TURN_IN_SEC: number = 30;
 
   private gameStatusObject: GameStatusModel = null;
 
@@ -33,10 +33,10 @@ export class SimulatorComponent implements OnInit {
   private serverStartTurn: number = 0;
 
   public disableReadyButton: boolean = false;
-  private readyDivHiddenState: boolean = false;
+  public readyDivHiddenState: boolean = false;
   public readyButtonHiddenState: boolean = false;
-  private gameDivHiddenState: boolean = true;
-  private scoreBoardDivHiddenState = true;
+  public gameDivHiddenState: boolean = true;
+  public scoreBoardDivHiddenState = true;
 
   public readyButtonText: string = "Ready";
 
@@ -89,33 +89,40 @@ export class SimulatorComponent implements OnInit {
   readyGame() {
 
     //check existence of bank and broker account
-    if(this.checkBankAndBrokerAccountExistsRequest) {
+    this.simulatorRequests.checkExistenceOfBankAccount(this.playerName).then(
+      res=>{
+        if(res.value){
+          this.simulatorRequests.checkExistenceOfBrokerAccount(this.playerName).then(
+            res=>{
+              if(res.value){
+                this.gameStatus();
+                this.disableReadyButton = true;
+                this.readyButtonText = "Please Wait...";
 
-      this.gameStatus();
-      this.disableReadyButton = true;
-      this.readyButtonText = "Please Wait...";
+                setTimeout(() => {
+                  this.disableReadyButton = false;
+                  this.readyButtonText = "Ready";
 
-      setTimeout(() => {
-        this.disableReadyButton = false;
-        this.readyButtonText = "Ready";
-
-        if (this.gameStatusObject != null && !this.gameStatusObject.isGameStarted)
-          this.readyGameRequest();
-        else if (this.gameStatusObject.isGameStarted) {
-          this.openSnackBar("Game has already started. Try to join again in few minutes.");
-          if (this.gameStatusCallTimerSubscriber != null)
-            this.gameStatusCallTimerSubscriber.unsubscribe();
-        } else {
-          this.openSnackBar("Please wait and try again.");
-          if (this.gameStatusCallTimerSubscriber != null)
-            this.gameStatusCallTimerSubscriber.unsubscribe();
+                  if (this.gameStatusObject != null && !this.gameStatusObject.isGameStarted)
+                    this.readyGameRequest();
+                  else if (this.gameStatusObject.isGameStarted) {
+                    this.openSnackBar("Game has already started. Try to join again in few minutes.");
+                    if (this.gameStatusCallTimerSubscriber != null)
+                      this.gameStatusCallTimerSubscriber.unsubscribe();
+                  } else {
+                    this.openSnackBar("Please wait and try again.");
+                    if (this.gameStatusCallTimerSubscriber != null)
+                      this.gameStatusCallTimerSubscriber.unsubscribe();
+                  }
+                }, 3000);
+              }else{
+                this.openSnackBar("You should create broker account to proceed.")
+              }
+            });
+        }else{
+          this.openSnackBar("You should create bank account to proceed.")
         }
-      }, 3000);
-
-    }else{
-      this.openSnackBar("You should create Bank and Broker account to play.");
-    }
-
+      });
   }
 
   gameStatus() {
@@ -284,7 +291,7 @@ export class SimulatorComponent implements OnInit {
           this.isReadyGameRequestSuccessful = this.readyButtonHiddenState = true;
         }
       }, error => {
-        this.openSnackBar("Cannot join game right now. There is on going game or sever error");
+        this.openSnackBar("Cannot join game right now. There is on going game or server error.");
         if (this.gameStatusCallTimerSubscriber != null)
           this.gameStatusCallTimerSubscriber.unsubscribe();
       }
@@ -400,22 +407,6 @@ export class SimulatorComponent implements OnInit {
     )
   }
 
-  private checkBankAndBrokerAccountExistsRequest(){
-
-    this.simulatorRequests.checkExistenceOfBankAccount(this.playerName).then(
-      res=>{
-
-        if(res.value){
-          this.simulatorRequests.checkExistenceOfBrokerAccount(this.playerName).then(
-            res=>{
-              console.log(res.value);
-              return res.value;
-            });
-        }else
-          return res.value;
-      });
-  }
-
   private getScoreboardRequest() {
 
     this.simulatorRequests.getScoreBoard(this.serverStartTurn).subscribe(
@@ -428,12 +419,9 @@ export class SimulatorComponent implements OnInit {
           Confeti.confetiAnimationE();
           Confeti.animationOnFuncE();
         }
-
         this.isScoreLoadingComplete = true;
-
       }
     )
-
   }
 
 

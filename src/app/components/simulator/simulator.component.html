@@ -52,7 +52,7 @@
     <div style="z-index: 1001;position: fixed; top: 60px; left: 50%">
       <mat-progress-bar mode="determinate" color="warn" [value]="(currentTimeInSecWithinTurn/TIME_FOR_EACH_TURN_IN_SEC)*100" style="position:fixed; left:0; width: 100vw"></mat-progress-bar>
       <div style="position: relative; left: -50%; top:5px">
-        <mat-chip-list style="display: inline-flex">
+        <mat-chip-list style="display: inline">
           <mat-chip color="primary" [selected]="true">
             <i class="fas fa-cog fa-spin"></i>&nbsp;&nbsp;
             Current Turn : {{currentTurn}}

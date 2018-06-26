@@ -16,15 +16,14 @@ import {BankBalanceModel} from "../models/BankBalanceModel";
 import {Buy, BuyObjectRoot, Sell, SellObjectRoot, StockAndUserDetails} from "../models/BuyAndSellModel";
 import {ScoreboardModel} from "../models/ScoreboardModel";
 import {RankingModel} from "../models/RankingModel";
-import {AuthModel} from "../models/AuthModel";
 
 @Injectable({
   providedIn: 'root'
 })
 export class HttprequestService {
-  readonly ROOT_URL = 'http://localhost:5000/';
+  // readonly ROOT_URL = 'http://localhost:5000/';
 
-  //readonly ROOT_URL = 'https://aws.amazon.bla.bla.bla:500/';
+  readonly ROOT_URL = 'http://stockmarketsimulator-env.3ipy32ivep.us-east-1.elasticbeanstalk.com/';
 
   constructor(private http: HttpClient) {
   }
