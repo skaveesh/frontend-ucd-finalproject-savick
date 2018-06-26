@@ -16,6 +16,7 @@ import {BankBalanceModel} from "../models/BankBalanceModel";
 import {Buy, BuyObjectRoot, Sell, SellObjectRoot, StockAndUserDetails} from "../models/BuyAndSellModel";
 import {ScoreboardModel} from "../models/ScoreboardModel";
 import {RankingModel} from "../models/RankingModel";
+import {AuthModel} from "../models/AuthModel";
 
 @Injectable({
   providedIn: 'root'
@@ -63,7 +64,7 @@ export class HttprequestService {
    * @param {string} password
    * @returns {Promise<Response>}
    */
-  loginPlayer(username: string, password: string): Promise<Response> {
+  loginPlayer(username: string, password: string) {
     const login_url = this.ROOT_URL + "player/login";
 
     let authorization: Authorization = {
@@ -77,6 +78,20 @@ export class HttprequestService {
 
     return this.http.post(login_url, userLoginData, {
       headers: this.jsonHeader,
+      observe: 'response'
+    }).toPromise().then(this.extractData).catch(this.handleErrorPromise);
+  }
+
+  /**
+   * login the player with authorization header automatically
+   * @param {string} auth
+   * @returns {Promise<any>}
+   */
+  loginPlayerWithAuth() {
+    const login_url = this.ROOT_URL + "player/login";
+
+    return this.http.post(login_url, null, {
+      headers: this.jsonHeader.append('Authorization', localStorage.getItem('auth')),
       observe: 'response'
     }).toPromise().then(this.extractData).catch(this.handleErrorPromise);
   }
@@ -101,7 +116,7 @@ export class HttprequestService {
     const get_bank_existence_url = this.ROOT_URL + "bank/account/check/" + username;
 
     return this.http.post(get_bank_existence_url, null, {
-      headers: this.jsonHeader
+      headers: this.jsonHeader.append('Authorization', localStorage.getItem('auth'))
     }).toPromise().then(this.extractData).catch(this.handleErrorPromise);
   }
 
@@ -122,7 +137,7 @@ export class HttprequestService {
     };
 
     return this.http.post(create_broker_account_url, createBankAccount, {
-      headers: this.jsonHeader,
+      headers: this.jsonHeader.append('Authorization', localStorage.getItem('auth')),
       observe: 'response'
     }).catch(this.handleErrorPromise);
   }
@@ -137,7 +152,7 @@ export class HttprequestService {
     const get_profile_url = this.ROOT_URL + "bank/account/profile/" + username;
 
     return this.http.post(get_profile_url, null, {
-      headers: this.jsonHeader
+      headers: this.jsonHeader.append('Authorization', localStorage.getItem('auth'))
     }).catch(this.handleErrorObservable);
   }
 
@@ -150,7 +165,7 @@ export class HttprequestService {
     const get_bank_balance_url = this.ROOT_URL + "bank/account/balance/" + username;
 
     return this.http.post(get_bank_balance_url, null, {
-      headers: this.jsonHeader
+      headers: this.jsonHeader.append('Authorization', localStorage.getItem('auth'))
     }).catch(this.handleErrorObservable);
   }
 
@@ -162,7 +177,7 @@ export class HttprequestService {
     const get_broker_existence_url = this.ROOT_URL + "broker/account/check/" + username;
 
     return this.http.post(get_broker_existence_url, null, {
-      headers: this.jsonHeader
+      headers: this.jsonHeader.append('Authorization', localStorage.getItem('auth'))
     }).toPromise().then(this.extractData).catch(this.handleErrorPromise);
   }
 
@@ -183,7 +198,7 @@ export class HttprequestService {
     };
 
     return this.http.post(create_broker_account_url, createBrokerAccount, {
-      headers: this.jsonHeader,
+      headers: this.jsonHeader.append('Authorization', localStorage.getItem('auth')),
       observe: 'response'
     }).catch(this.handleErrorPromise);
   }
@@ -197,7 +212,7 @@ export class HttprequestService {
     const get_portfolio_url = this.ROOT_URL + "broker/account/portfolio/" + username;
 
     return this.http.post(get_portfolio_url, null, {
-      headers: this.jsonHeader
+      headers: this.jsonHeader.append('Authorization', localStorage.getItem('auth'))
     }).catch(this.handleErrorObservable);
   }
 
@@ -228,7 +243,7 @@ export class HttprequestService {
     };
 
     return this.http.post(buy_url, buyObjectRoot, {
-      headers: this.jsonHeader,
+      headers: this.jsonHeader.append('Authorization', localStorage.getItem('auth')),
       observe: 'response'
     }).catch(this.handleErrorPromise);
   }
@@ -260,7 +275,7 @@ export class HttprequestService {
     };
 
     return this.http.post(sell_url, sellObjectRoot, {
-      headers: this.jsonHeader,
+      headers: this.jsonHeader.append('Authorization', localStorage.getItem('auth')),
       observe: 'response'
     }).catch(this.handleErrorPromise);
   }
@@ -274,7 +289,7 @@ export class HttprequestService {
     const ready_player_url = this.ROOT_URL + "game/ready/" + username;
 
     return this.http.post(ready_player_url, null, {
-      headers: this.jsonHeader,
+      headers: this.jsonHeader.append('Authorization', localStorage.getItem('auth')),
       observe: 'response'
     }).catch(this.handleErrorPromise);
   }
@@ -299,7 +314,7 @@ export class HttprequestService {
     const get_analyser_recommendation_url = this.ROOT_URL + "game/analyser/recommendation";
 
     return this.http.post(get_analyser_recommendation_url, null, {
-      headers: this.jsonHeader
+      headers: this.jsonHeader.append('Authorization', localStorage.getItem('auth'))
     }).catch(this.handleErrorObservable);
   }
 
@@ -312,7 +327,7 @@ export class HttprequestService {
     const get_scoreboard_url = this.ROOT_URL + "player/scoreboard/" + serverTurn;
 
     return this.http.post(get_scoreboard_url, null, {
-      headers: this.jsonHeader
+      headers: this.jsonHeader.append('Authorization', localStorage.getItem('auth'))
     }).catch(this.handleErrorObservable);
   }
 
@@ -353,7 +368,7 @@ export class HttprequestService {
    * @returns {Promise<any>}
    */
   private handleErrorPromise(error: any): Promise<any> {
-    console.error('An error occurred', error);
+    console.error('HTTP error occurred');
     return Promise.reject(error.message || error);
   }
 }

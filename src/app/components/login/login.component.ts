@@ -16,6 +16,17 @@ export class LoginComponent implements OnInit {
   constructor(private authService:AuthService, private router: Router, private snackBar:MatSnackBar) { }
 
   ngOnInit() {
+
+    //automatically login with auth if auth data available
+    let username, auth;
+    username = localStorage.getItem('username');
+
+    this.authService.loginWithAuth(username).then(
+      res=>{
+        if(this.authService.authInfo$.value.isLoggedIn())
+          this.router.navigate(['/simulator']);
+      }
+    );
   }
 
   logUser(){

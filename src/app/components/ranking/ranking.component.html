@@ -29,7 +29,7 @@
     <tr mat-row *matRowDef="let row; columns: rankingListDisplayedColumns;"></tr>
   </table>
 
-  <mat-card *ngIf="isRankingLoadingComplete && rankingList.length == 0">
+  <mat-card *ngIf="rankingList != null && isRankingLoadingComplete && rankingList.length == 0">
     No Rankings
   </mat-card>
 
