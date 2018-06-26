@@ -4,7 +4,9 @@ This project was generated with [Angular CLI](https://github.com/angular/angular
 
 ## Running Project
   git clone https://github.com/skaveesh/frontend-ucd-finalproject-savick.git savick-project
+  
   cd quickstart
+  
   npm install
 
 ## Development server
